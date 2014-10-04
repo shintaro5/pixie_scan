@@ -11,12 +11,12 @@
  * \date 02 July 2007
  *
  * <STRONG>Modified:</strong> <br>
- * SNL - 7-12-07 : 
+ * SNL - 7-12-07 :
  *    Add root analysis. If the ROOT program has been
  *    detected on the computer system the and the
  *    makefile has the useroot flag declared, ROOT
  *    analysis will be included. <br>
- * DTM - Oct. '09 : 
+ * DTM - Oct. '09 :
  *    Significant structural/cosmetic changes. Event processing is
  *    now primarily handled by individual event processors which
  *    handle their own DetectorDrivers
@@ -93,7 +93,7 @@ DetectorDriver* DetectorDriver::get() {
     return instance;
 }
 
-DetectorDriver::DetectorDriver() : histo(OFFSET, RANGE) 
+DetectorDriver::DetectorDriver() : histo(OFFSET, RANGE)
 {
     cout << "DetectorDriver: loading processors" << endl;
 #if defined(pulsefit) || defined(dcfd)
@@ -113,7 +113,7 @@ DetectorDriver::DetectorDriver() : histo(OFFSET, RANGE)
 #ifdef useroot
     // vecProcess.push_back(new ScintROOT());
     // vecProcess.push_back(new VandleROOT());
-    vecProcess.push_back(new RootProcessor("tree.root", "tree"));
+    //vecProcess.push_back(new RootProcessor("tree.root", "tree"));
 #endif
 }
 
@@ -141,7 +141,7 @@ DetectorDriver::~DetectorDriver()
 
 /*!
   Called from PixieStd.cpp during initialization.
-  The calibration file cal.txt is read using the function ReadCal() and 
+  The calibration file cal.txt is read using the function ReadCal() and
   checked to make sure that all channels have a calibration.
 */
 
@@ -157,7 +157,7 @@ int DetectorDriver::Init(RawEvent& rawev)
     // initialize processors in the event processing vector
     for (vector<EventProcessor *>::iterator it = vecProcess.begin();
          it != vecProcess.end(); it++) {
-        (*it)->Init(rawev);	
+        (*it)->Init(rawev);
     }
 
     /*
@@ -182,23 +182,23 @@ int DetectorDriver::Init(RawEvent& rawev)
   after an event has been constructed. This function is passed the mode
   the analysis is currently in (the options are either "scan" or
   "standaloneroot").  The function checks the thresholds for the individual
-  channels in the event and calibrates their energies. 
+  channels in the event and calibrates their energies.
   The raw and calibrated energies are plotted if the appropriate DAMM spectra
-  have been created.  Then experiment specific processing is performed.  
+  have been created.  Then experiment specific processing is performed.
   Currently, both RMS and MTC processing is available.  After all processing
   has occured, appropriate plotting routines are called.
 */
-int DetectorDriver::ProcessEvent(const string &mode, RawEvent& rawev){   
+int DetectorDriver::ProcessEvent(const string &mode, RawEvent& rawev){
     /*
       Begin the event processing looping over all the channels
       that fired in this particular event.
     */
     plot(dammIds::raw::D_NUMBER_OF_EVENTS, dammIds::GENERIC_CHANNEL);
-    
+
     /*
     const vector<ChanEvent *> &eventList = rawev.GetEventList();
     for(size_t i=0; i < eventList.size(); i++) {
-        ChanEvent *chan = eventList[i];  
+        ChanEvent *chan = eventList[i];
     */
     for (vector<ChanEvent*>::const_iterator it = rawev.GetEventList().begin();
          it != rawev.GetEventList().end(); ++it) {
@@ -213,8 +213,8 @@ int DetectorDriver::ProcessEvent(const string &mode, RawEvent& rawev){
         double energy = (*it)->GetCalEnergy();
         CorrEventData data(time, energy);
         TreeCorrelator::get()->place(place)->activate(data);
-    } 
- 
+    }
+
     // have each processor in the event processing vector handle the event
     /* First round is preprocessing, where process result must be guaranteed
      * to not to be dependent on results of other Processors. */
@@ -233,7 +233,7 @@ int DetectorDriver::ProcessEvent(const string &mode, RawEvent& rawev){
         }
     }
 
-    return 0;   
+    return 0;
 }
 
 // declare plots for all the event processors
@@ -248,7 +248,7 @@ void DetectorDriver::DeclarePlots(MapFile& theMapFile)
 	 it != vecProcess.end(); it++) {
         (*it)->DeclarePlots();
     }
-    
+
     // Declare plots for each channel
     DetectorLibrary* modChan = DetectorLibrary::get();
 
@@ -266,12 +266,12 @@ void DetectorDriver::DeclarePlots(MapFile& theMapFile)
 
     DetectorLibrary::size_type maxChan = (theMapFile ? modChan->size() : 192);
 
-    for (DetectorLibrary::size_type i = 0; i < maxChan; i++) {	 
+    for (DetectorLibrary::size_type i = 0; i < maxChan; i++) {
         if (theMapFile && !modChan->HasValue(i)) {
             continue;
         }
-        stringstream idstr; 
-        
+        stringstream idstr;
+
         if (theMapFile) {
             const Identifier &id = modChan->at(i);
 
@@ -287,7 +287,7 @@ void DetectorDriver::DeclarePlots(MapFile& theMapFile)
         DeclareHistogram1D(D_FILTER_ENERGY + i, SE, ("FilterE " + idstr.str()).c_str() );
         DeclareHistogram1D(D_SCALAR + i, SE, ("Scalar " + idstr.str()).c_str() );
 #if !defined(REVD) && !defined(REVF)
-        DeclareHistogram1D(D_TIME + i, SE, ("Time " + idstr.str()).c_str() ); 
+        DeclareHistogram1D(D_TIME + i, SE, ("Time " + idstr.str()).c_str() );
 #endif
         DeclareHistogram1D(D_CAL_ENERGY + i, SE, ("CalE " + idstr.str()).c_str() );
         DeclareHistogram1D(D_CAL_ENERGY_REJECT + i, SE, ("CalE NoSat " + idstr.str()).c_str() );
@@ -309,7 +309,7 @@ bool DetectorDriver::SanityCheck(void) const
 */
 
 int DetectorDriver::ThreshAndCal(ChanEvent *chan, RawEvent& rawev)
-{   
+{
     // retrieve information about the channel
     Identifier chanId = chan->GetChanID();
     int id            = chan->GetID();
@@ -332,11 +332,11 @@ int DetectorDriver::ThreshAndCal(ChanEvent *chan, RawEvent& rawev)
         plot(D_HAS_TRACE, id);
 
 	for (vector<TraceAnalyzer *>::iterator it = vecAnalyzer.begin();
-	     it != vecAnalyzer.end(); it++) {	
+	     it != vecAnalyzer.end(); it++) {
             (*it)->Analyze(trace, type, subtype);
 	}
 
-	if (trace.HasValue("filterEnergy") ) {     
+	if (trace.HasValue("filterEnergy") ) {
 	    if (trace.GetValue("filterEnergy") > 0) {
             energy = trace.GetValue("filterEnergy");
             plot(D_FILTER_ENERGY + id, energy);
@@ -344,7 +344,7 @@ int DetectorDriver::ThreshAndCal(ChanEvent *chan, RawEvent& rawev)
             energy = 2;
 	    }
 	}
-	if (trace.HasValue("calcEnergy") ) {	    
+	if (trace.HasValue("calcEnergy") ) {
 	    energy = trace.GetValue("calcEnergy");
 	    chan->SetEnergy(energy);
 	} else if (!trace.HasValue("filterEnergy")) {
@@ -353,12 +353,12 @@ int DetectorDriver::ThreshAndCal(ChanEvent *chan, RawEvent& rawev)
 	}
 	if (trace.HasValue("phase") ) {
 	    double phase = trace.GetValue("phase");
-	    chan->SetHighResTime( phase * pixie::adcClockInSeconds + 
+	    chan->SetHighResTime( phase * pixie::adcClockInSeconds +
 				  chan->GetTrigTime() * pixie::filterClockInSeconds);
 	}
     } else {
 	// otherwise, use the Pixie on-board calculated energy
-	// add a random number to convert an integer value to a 
+	// add a random number to convert an integer value to a
 	//   uniformly distributed floating point
 
 	energy = chan->GetEnergy() + randoms->Get();
@@ -371,21 +371,21 @@ int DetectorDriver::ThreshAndCal(ChanEvent *chan, RawEvent& rawev)
 
     /*
       update the detector summary
-    */    
+    */
     rawev.GetSummary(type)->AddEvent(chan);
     DetectorSummary *summary;
-    
+
     summary = rawev.GetSummary(type + ':' + subtype, false);
     if (summary != NULL)
 	summary->AddEvent(chan);
 
     if(hasStartTag) {
-	summary = 
+	summary =
 	    rawev.GetSummary(type + ':' + subtype + ':' + "start", false);
 	if (summary != NULL)
 	    summary->AddEvent(chan);
     }
-    
+
     return 1;
 }
 
@@ -397,9 +397,9 @@ int DetectorDriver::PlotRaw(const ChanEvent *chan)
 {
     int id = chan->GetID();
     float energy = chan->GetEnergy() / ChanEvent::pixieEnergyContraction;
-    
+
     plot(D_RAW_ENERGY + id, energy);
-    
+
     return 0;
 }
 
@@ -412,7 +412,7 @@ int DetectorDriver::PlotCal(const ChanEvent *chan)
     int id = chan->GetID();
     // int dammid = chan->GetChanID().GetDammID();
     float calEnergy = chan->GetCalEnergy();
-    
+
     plot(D_CAL_ENERGY + id, calEnergy);
     if (!chan->IsSaturated() && !chan->IsPileup())
         plot(D_CAL_ENERGY_REJECT + id, calEnergy);
@@ -442,7 +442,7 @@ void DetectorDriver::ReadCal()
       five variables describe the detector's physical location (strip number,
       detector number, ...), the detector type, the detector subtype, the number
       of calibrations, and their polynomial order.  Using this information, the
-      rest of a channel's calibration is read in as -- lower threshold for the 
+      rest of a channel's calibration is read in as -- lower threshold for the
       current calibration, followed by the polynomial constants in increasing
       polynomial order.  The lower thresholds and polynomial values are read in
       for each distinct calibration specified by the number of calibrations.
@@ -492,11 +492,11 @@ void DetectorDriver::ReadCal()
 		lookupID.SetType(detType);
 		lookupID.SetSubtype(detSubtype);
 		// find the identifier in the map
-		DetectorLibrary::iterator mapIt = 
-		    find(modChan->begin(), modChan->end(), lookupID); 
+		DetectorLibrary::iterator mapIt =
+		    find(modChan->begin(), modChan->end(), lookupID);
 		if (mapIt == modChan->end()) {
 		    cout << "Can not match detector type " << detType
-			 << " and subtype " << detSubtype 
+			 << " and subtype " << detSubtype
 			 << " with location " << detLocation
 			 << " to a channel in the map." << endl;
 		    exit(EXIT_FAILURE);
@@ -521,7 +521,7 @@ void DetectorDriver::ReadCal()
 
                     for(unsigned int j = 0; j < detCal.polyOrder+1; j++){
                         /*
-                          For the calibration order, read in the polynomial 
+                          For the calibration order, read in the polynomial
                           constants in ascending order
                         */
                         calFile >> val;
@@ -535,9 +535,9 @@ void DetectorDriver::ReadCal()
                 */
                 detCal.thresh.push_back(MAX_PAR);
             } else {
-                // this is a comment, skip line 
+                // this is a comment, skip line
                 calFile.ignore(1000,'\n');
-            }            
+            }
         } // end while (!calFile) loop - end reading cal.txt file
     }
     calFile.close();
@@ -556,12 +556,12 @@ void DetectorDriver::ReadCal()
 		// set the remaining fields properly
 		calIt->detType     = type;
 		calIt->detSubtype  = mapIt->GetSubtype();
-		calIt->detLocation = mapIt->GetLocation(); 
+		calIt->detLocation = mapIt->GetLocation();
 		continue;
 	    }
 	    cout << "Uncalibrated detector found for type " << type
-		 << " at location " << mapIt->GetLocation() 
-		 << ". No default calibration is given, please correct." 
+		 << " at location " << mapIt->GetLocation()
+		 << ". No default calibration is given, please correct."
 		 << endl;
 	    exit(EXIT_FAILURE);
 	}
@@ -570,9 +570,9 @@ void DetectorDriver::ReadCal()
       Print the calibration values that have been read in
     */
     //cout << "calibration parameters are: " << cal.size() << endl;
-   
+
     if (verbose::CALIBRATION_INIT) {
-        cout << setw(4)  << "mod" 
+        cout << setw(4)  << "mod"
             << setw(4)  << "ch"
         << setw(4)  << "loc"
         << setw(10) << "type"
@@ -580,26 +580,26 @@ void DetectorDriver::ReadCal()
         << setw(5)  << "cals"
         << setw(6)  << "order"
         << setw(31) << "cal values: low-high thresh, coeffs" << endl;
-    
+
         //? calibration print command?
         for(size_t a = 0; a < cal.size(); a++){
-        cout << setw(4)  << int(a/16) 
+        cout << setw(4)  << int(a/16)
         << setw(4)  << (a % 16)
-        << setw(4)  << cal[a].detLocation 
+        << setw(4)  << cal[a].detLocation
         << setw(10) << cal[a].detType
-            << setw(8)  << cal[a].detSubtype 
+            << setw(8)  << cal[a].detSubtype
         << setw(5)  << cal[a].numCal
-            << setw(6)  << cal[a].polyOrder;      
+            << setw(6)  << cal[a].polyOrder;
             for(unsigned int b = 0; b < cal[a].numCal; b++){
             cout << setw(6) << cal[a].thresh[b];
                 cout << " - " << setw(6) << cal[a].thresh[b+1];
                 for(unsigned int c = 0; c < cal[a].polyOrder+1; c++){
-            cout << setw(7) << setprecision(5) 
+            cout << setw(7) << setprecision(5)
             << cal[a].val[b*(cal[a].polyOrder+1)+c];
                 }
 
             }
-            
+
             cout << endl;
         }
     }
@@ -608,7 +608,7 @@ void DetectorDriver::ReadCal()
 /*!
   Construct calibration parameters using Zero() method
 */
-Calibration::Calibration() : 
+Calibration::Calibration() :
     id(-1), detType(""), detSubtype(""), detLocation(-1),
     numCal(1), polyOrder(1)
 {
@@ -623,12 +623,12 @@ double Calibration::Calibrate(double raw)
 {
     /*
       Make sure we don't have any calibration values below the lowest
-      calibration theshold or any calibrated energies above the 
+      calibration theshold or any calibrated energies above the
       maximum threshold value set in cal.txt
     */
     if(raw < thresh[0]) {
         return 0;
-    } 
+    }
 
     if(raw >= thresh[numCal]) {
 	return thresh[numCal] - 1;
@@ -661,6 +661,6 @@ double Calibration::Calibrate(double raw)
 */
 extern "C" void detectorend_()
 {
-    //cout << "ending, no rootfile " << endl;       
+    //cout << "ending, no rootfile " << endl;
 }
 

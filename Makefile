@@ -235,16 +235,13 @@ PIXIE = pixie_ldf_c$(ExeSuf)
 endif
 
 #---------- Adjust compilation if ROOT capability is desired
-ifdef USEROOT
-CXX_OBJS  += $(ROOTPROCESSORO) $(VANDLEROOTO) $(SCINTROOTO)
-PIXIE = pixie_ldf_c_root$(ExeSuf)
+#CXX_OBJS  += $(ROOTPROCESSORO) $(VANDLEROOTO) $(SCINTROOTO)
 ROOTCONFIG   := root-config
 
 #no uncomment ROOTCLFAGS   := $(filter-out pthread,$(ROOTCFLAGS))
 CXXFLAGS     += $(shell $(ROOTCONFIG) --cflags) -Duseroot
 LDFLAGS      += $(shell $(ROOTCONFIG) --ldflags)
 LDLIBS       += $(shell $(ROOTCONFIG) --libs)
-endif
 
 #------------ Compile with Gamma-Gamma gates support in GeProcessor
 ifdef GGATES

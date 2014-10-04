@@ -30,15 +30,15 @@ class TimingInformation
 	double z0;
 	double zOffset;
     };
-    
-    struct TimingData 
+
+    struct TimingData
     {
 	TimingData(void);
 	TimingData(ChanEvent *chan);
     const Trace &trace;
-	
+
 	bool dataValid;
-	
+
 	double aveBaseline;
 	double discrimination;
 	double highResTime;
@@ -53,7 +53,7 @@ class TimingInformation
 
 	int numAboveThresh;
     };
-    
+
 #ifdef useroot
     struct DataRoot
     {
@@ -78,15 +78,15 @@ class TimingInformation
 
     struct BarData
     {
-	BarData(const TimingData& Right, const TimingData& Left, 
+	BarData(const TimingData& Right, const TimingData& Left,
 		const TimingCal &cal, const std::string &type);
-	bool BarEventCheck(const double &timeDiff, 
+	bool BarEventCheck(const double &timeDiff,
 			   const std::string &type);
-        double CalcFlightPath(double &timeDiff, const TimingCal &cal, 
+        double CalcFlightPath(double &timeDiff, const TimingCal &cal,
 			      const std::string &type);
-	
+
         bool event;
-	
+
 	double flightPath;
 	double lMaxVal;
 	double lqdc;
@@ -101,7 +101,7 @@ class TimingInformation
 	double timeDiff;
 	double walkCorTimeDiff;
 	double walkCorTimeAve;
-	
+
 	std::map<unsigned int, double> timeOfFlight;
 	std::map<unsigned int, double> corTimeOfFlight;
 	std::map<unsigned int, double> energy;
@@ -115,14 +115,14 @@ class TimingInformation
     typedef std::map<unsigned int, double> TimeOfFlightMap;
 
     double CalcEnergy(const double &timeOfFlight, const double &z0);
-    
+
     static double GetConstant(const std::string &value);
     static TimingCal GetTimingCal(const IdentKey &identity);
     static void ReadTimingCalibration(void);
     static void ReadTimingConstants(void);
-    
+
  private:
-    static const double qdcCompression = 4.0;
+    static constexpr double qdcCompression = 4.0;
 
     static std::map<std::string, double> constantsMap;
     static TimingCalMap calibrationMap;
