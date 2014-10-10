@@ -1,8 +1,8 @@
 /** \file FittingAnalyzer.cpp
- * \brief Uses a chi^2 minimization to fit waveforms
+ * \brief Uses a chi^2 minimization to fit waveforms using ROOT
  *
  * Obtains the phase of a waveform using a Chi^2 fitting algorithm
- * implemented through the GSL libraries.
+ * implemented through ROOT
  *
  * \author S. V. Paulauskas
  * \date 22 July 2011
@@ -15,21 +15,12 @@
 
 #include <ctime>
 
+#include <TF1.h>
+#include <TGraphErrors.h>
+#include <TFitResult.h>
+
 #include "DammPlotIds.hpp"
 #include "FittingAnalyzer.hpp"
-
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_fit.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_multifit_nlin.h>
-#include <gsl/gsl_spline.h>
-#include <gsl/gsl_vector.h>
-
-int FitFunction(const gsl_vector *x, void *FitData, gsl_vector *f);
-int CalcJacobian(const gsl_vector *x, void *FitData, gsl_matrix *J);
-int FitFunctionDerivative(const gsl_vector *x, void *FitData, gsl_vector *f,
-                          gsl_matrix *J);
 
 namespace dammIds {
     namespace trace {
@@ -126,60 +117,30 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
 	gamma = TimingInformation::GetConstant("gammaDefault");
     }
 
-    const gsl_multifit_fdfsolver_type *T;
-    gsl_multifit_fdfsolver *s;
-    int status;
-    const size_t numParams = 2;
-    const size_t sizeFit = waveform.size();
+    vector<double> xvals;
+    for(unsigned int i = 0; i < trc_.size(); i++)
+        xvals.push_back(i);
 
-    gsl_matrix *covar = gsl_matrix_alloc (numParams, numParams);
-    double y[sizeFit], sigma[sizeFit];
-    struct FittingAnalyzer::FitData data =
-	{sizeFit, y, sigma, beta,gamma,qdc};
-    gsl_multifit_function_fdf f;
+    VandleTimingFunction *fobj = new VandleTimingFunction();
+    TF1 *f = new TF1("f", fobj, 0., 1000., 2, "VandleTimingFunction");
+    f->SetParameters(maxPos_, qdc_*0.5);
 
-    double xInit[numParams] = {0.0,2.5};
-    gsl_vector_view x = gsl_vector_view_array (xInit, numParams);
+    TGraphErrors *graph =
+        new TGraphErrors(waveform_.size(), &(xvals[0]), &(waveform_[0]));
 
-    f.f = &FitFunction;
-    f.df = &CalcJacobian;
-    f.fdf = &FitFunctionDerivative;
-    f.n = sizeFit;
-    f.p = numParams;
-    f.params = &data;
+    for(unsigned int i = 0; i < waveform_.size(); i++)
+        graph->SetPointError(i, 0.0, stddev_);
 
-    for(unsigned int i = 0; i < sizeFit; i++) {
-	y[i] = waveform.at(i);
-	sigma[i] = sigmaBaseline;
-    }
+    TFitResultPtr fitResults = graph->Fit(f,"NSQR","", waveformLowSampleNum_,
+                                          waveformHighSampleNum_);
+    fitStatus_ = fitResults;
 
-    T = gsl_multifit_fdfsolver_lmsder;
-    s = gsl_multifit_fdfsolver_alloc (T, sizeFit, numParams);
-    gsl_multifit_fdfsolver_set (s, &f, &x.vector);
+    phase_ = fitResults->Value(0);
 
-    for(unsigned int iter = 0; iter < 1e8; iter++) {
-    	status = gsl_multifit_fdfsolver_iterate(s);
-	if(status)
-    	    break;
-	status = gsl_multifit_test_delta (s->dx, s->x, 1e-4, 1e-4);
-	if(status != GSL_CONTINUE)
-    	    break;
-    }
+    // cout << "Fit Status : " << fitStatus_ << " " << fitResults->Value(0)
+    //      << " " << fitResults->Value(1) << endl;
 
-    gsl_multifit_covar (s->J, 0.0, covar);
-
-    double chi = gsl_blas_dnrm2(s->f);
-    double dof = sizeFit - numParams;
-    double chisqPerDof = pow(chi, 2.0)/dof;
-    vector<double> fitPars;
-
-    for(unsigned int i=0; i < numParams; i++)
-	fitPars.push_back(gsl_vector_get(s->x,i));
-    fitPars.push_back(beta);
-    fitPars.push_back(gamma);
-
-    gsl_multifit_fdfsolver_free (s);
-    gsl_matrix_free (covar);
+    delete(f);
 
     trace.InsertValue("phase", fitPars.front()+maxPos);
     trace.InsertValue("walk", CalcWalk(maxVal, detType, detSubtype));

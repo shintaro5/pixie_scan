@@ -141,11 +141,11 @@ DETECTORSUMMARYO = DetectorSummary.o
 EVENTPROCESSORO  = EventProcessor.o
 INITIALIZEO      = Initialize.o
 MAPFILEO         = MapFile.o
-PATHHOLDERO	 = PathHolder.o
+PATHHOLDERO	     = PathHolder.o
 PIXIEO           = PixieStd.o
 PLACESO          = Places.o
 PLACEBUILDERO    = PlaceBuilder.o
-PUGIXMLO	 = pugixml.o
+PUGIXMLO	     = pugixml.o
 RANDOMPOOLO      = RandomPool.o
 RAWEVENTO        = RawEvent.o
 STATSDATAO       = StatsData.o
@@ -157,11 +157,11 @@ PLOTSREGISTERO   = PlotsRegister.o
 PLOTSO           = Plots.o
 
 #Trace Related Objects
-CFDANALYZERO     = CfdAnalyzer.o
+#CFDANALYZERO     = CfdAnalyzer.o
 DOUBLETRACEO     = DoubleTraceAnalyzer.o
 FITTINGANALYZERO = FittingAnalyzer.o
 TAUANALYZERO     = TauAnalyzer.o
-TRACEO		 = Trace.o
+TRACEO		     = Trace.o
 TRACEEXTRACTORO  = TraceExtractor.o
 TRACEFILTERO     = TraceFilterer.o
 TRACEPLOTO       = TracePlotter.o
@@ -169,25 +169,25 @@ TRACESUBO        = TraceAnalyzer.o
 WAVEFORMSUBO     = WaveformAnalyzer.o
 
 #Dectector Processor Objects
-BETAPROCESSORO   = BetaProcessor.o
-DSSDPROCESSORO   = DssdProcessor.o
-GEPROCESSORO     = GeProcessor.o
-IONCHAMBERPROCESSORO = IonChamberProcessor.o
-ISSDPROCESSORO   = ImplantSsdProcessor.o
-LIQUIDPROCESSORO = LiquidProcessor.o
-LOGICPROCESSORO  = LogicProcessor.o
-MCPPROCESSORO    = McpProcessor.o
-MTCPROCESSORO    = MtcProcessor.o
-NEUTRONPROCESSORO = NeutronProcessor.o
-POSITIONPROCESSORO = PositionProcessor.o
+#BETAPROCESSORO   = BetaProcessor.o
+#DSSDPROCESSORO   = DssdProcessor.o
+#GEPROCESSORO     = GeProcessor.o
+#IONCHAMBERPROCESSORO = IonChamberProcessor.o
+#ISSDPROCESSORO   = ImplantSsdProcessor.o
+#LIQUIDPROCESSORO = LiquidProcessor.o
+#LOGICPROCESSORO  = LogicProcessor.o
+#MCPPROCESSORO    = McpProcessor.o
+#MTCPROCESSORO    = MtcProcessor.o
+#NEUTRONPROCESSORO = NeutronProcessor.o
+#POSITIONPROCESSORO = PositionProcessor.o
 PULSERPROCESSORO = PulserProcessor.o
-SSDPROCESSORO    = SsdProcessor.o
-VALIDPROCESSORO  = ValidProcessor.o
-VANDLEPROCESSORO = VandleProcessor.o
+#SSDPROCESSORO    = SsdProcessor.o
+#VALIDPROCESSORO  = ValidProcessor.o
+#VANDLEPROCESSORO = VandleProcessor.o
 
 #ROOT Objects
-ROOTPROCESSORO   = RootProcessor.o
-#SCINTROOTO       = ScintROOT.o
+#ROOTPROCESSORO   = RootProcessor.o
+#SCINTROOTO      = ScintROOT.o
 #VANDLEROOTO      = VandleROOT.o
 
 ifdef REVISIOND
