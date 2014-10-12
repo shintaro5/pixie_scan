@@ -160,13 +160,14 @@ PLOTSO           = Plots.o
 #CFDANALYZERO     = CfdAnalyzer.o
 DOUBLETRACEO     = DoubleTraceAnalyzer.o
 FITTINGANALYZERO = FittingAnalyzer.o
-VANDLETIMINGO    = VandleTimingFunction.o
+SIPMTTIMINGO     = SiPmtTimingFunction.o
 TAUANALYZERO     = TauAnalyzer.o
 TRACEO		     = Trace.o
 TRACEEXTRACTORO  = TraceExtractor.o
 TRACEFILTERO     = TraceFilterer.o
 TRACEPLOTO       = TracePlotter.o
 TRACESUBO        = TraceAnalyzer.o
+VANDLETIMINGO    = VandleTimingFunction.o
 WAVEFORMSUBO     = WaveformAnalyzer.o
 
 #Dectector Processor Objects
@@ -223,7 +224,7 @@ CXX_OBJS += $(BETAPROCESSORO) $(DSSDPROCESSORO) $(GEPROCESSORO) \
 	$(SSDPROCESSORO) $(VALIDPROCESSORO) $(VANDLEPROCESSORO)
 
 ifdef PULSEFIT
-CXX_OBJS += $(FITTINGANALYZERO) $(VANDLETIMINGO)
+CXX_OBJS += $(FITTINGANALYZERO) $(VANDLETIMINGO) $(SIPMTTIMINGO)
 else ifdef DCFD
 CXX_OBJS += $(CFDANALYZERO)
 endif

@@ -88,6 +88,7 @@
 		<Unit filename="include/RootProcessor.hpp" />
 		<Unit filename="include/ScintProcessor.hpp" />
 		<Unit filename="include/ScintROOT.hpp" />
+		<Unit filename="include/SiPmtTimingFunction.hpp" />
 		<Unit filename="include/SsdProcessor.hpp" />
 		<Unit filename="include/StatsData.hpp" />
 		<Unit filename="include/TauAnalyzer.hpp" />
@@ -155,6 +156,7 @@
 		<Unit filename="src/RootProcessor.cpp" />
 		<Unit filename="src/ScintProcessor.cpp" />
 		<Unit filename="src/ScintROOT.cpp" />
+		<Unit filename="src/SiPmtTimingFunction.cpp" />
 		<Unit filename="src/SsdProcessor.cpp" />
 		<Unit filename="src/StatsData.cpp" />
 		<Unit filename="src/TauAnalyzer.cpp" />

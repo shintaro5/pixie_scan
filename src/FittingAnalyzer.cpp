@@ -21,6 +21,7 @@
 
 #include "DammPlotIds.hpp"
 #include "FittingAnalyzer.hpp"
+#include "SiPmtTimingFunction.hpp"
 #include "VandleTimingFunction.hpp"
 
 namespace dammIds {
