@@ -29,5 +29,10 @@ public:
     ~VandleTimingFunction(){};
 
     double operator() (double *x, double *p);
+
+    void SetBeta(const double &a){beta_ = a;};
+    void SetGamma(const double &a){gamma_ = a;};
+private:
+    double beta_, gamma_;
 };
 #endif

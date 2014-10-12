@@ -92,9 +92,6 @@ GCCFLAGS += -fPIC $(CINCLUDEDIRS) -Dnewreadout
 CXXFLAGS += -Wall -g -fPIC $(CINCLUDEDIRS) -Dnewreadout
 
 ifdef REVISIOND
- /home/vincent/upak_help_path
-DAMM->in test00.his
-Memory Map the HIS file Segment:test00.his
 CXXFLAGS += -DREVD
 endif
 ifdef REVISIONF
@@ -239,6 +236,7 @@ PIXIE = pixie_ldf_c$(ExeSuf)
 endif
 
 #---------- Adjust compilation if ROOT capability is desired
+ifdef PULSEFIT
 #CXX_OBJS  += $(ROOTPROCESSORO) $(VANDLEROOTO) $(SCINTROOTO)
 ROOTCONFIG   := root-config
 
@@ -246,6 +244,7 @@ ROOTCONFIG   := root-config
 CXXFLAGS     += $(shell $(ROOTCONFIG) --cflags) -Duseroot
 LDFLAGS      += $(shell $(ROOTCONFIG) --ldflags)
 LDLIBS       += $(shell $(ROOTCONFIG) --libs)
+endif
 
 #------------ Compile with Gamma-Gamma gates support in GeProcessor
 ifdef GGATES

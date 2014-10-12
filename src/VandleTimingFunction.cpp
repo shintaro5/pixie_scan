@@ -24,9 +24,6 @@
 #include "VandleTimingFunction.hpp"
 
 double VandleTimingFunction::operator()(double *x, double *par) {
-    double beta = 0.832272;
-    double gamma = 0.236425;
-
     double phase = par[0];
     double amplitude = par[1];
     double diff = x[0] - phase;
@@ -34,7 +31,7 @@ double VandleTimingFunction::operator()(double *x, double *par) {
     if(x[0] < phase)
         return(0.0);
 
-    double val = amplitude * exp(-beta*diff) * (1-exp(-pow(gamma*diff,4.)));
+    double val = amplitude * exp(-beta_*diff) * (1-exp(-pow(gamma_*diff,4.)));
 
     return(val);
 }

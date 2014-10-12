@@ -99,29 +99,29 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
         return;
     }
 
-    double beta, gamma;
+    VandleTimingFunction *fobj = new VandleTimingFunction();
+
     if (detType == "vandleSmall") {
-        beta  = TimingInformation::GetConstant("betaVandle");
-        gamma = TimingInformation::GetConstant("gammaVandle");
+        fobj->SetBeta(TimingInformation::GetConstant("betaVandle"));
+        fobj->SetGamma(TimingInformation::GetConstant("gammaVandle"));
     }else if (detSubtype == "beta") {
-        beta  = TimingInformation::GetConstant("betaBeta");
-        gamma = TimingInformation::GetConstant("gammaBeta");
+        fobj->SetBeta(TimingInformation::GetConstant("betaBeta"));
+        fobj->SetGamma(TimingInformation::GetConstant("gammaBeta"));
     }else if(detType == "tvandle") {
-        beta  = TimingInformation::GetConstant("betaTvandle");
-        gamma = TimingInformation::GetConstant("gammaTvandle");
+        fobj->SetBeta(TimingInformation::GetConstant("betaTvandle"));
+        fobj->SetGamma(TimingInformation::GetConstant("gammaTvandle"));
     }else if(detType == "pulser") {
-        beta  = TimingInformation::GetConstant("betaPulser");
-        gamma = TimingInformation::GetConstant("gammaPulser");
+        fobj->SetBeta(TimingInformation::GetConstant("betaPulser"));
+        fobj->SetGamma(TimingInformation::GetConstant("gammaPulser"));
     }else {
-        beta  = TimingInformation::GetConstant("betaDefault");
-        gamma = TimingInformation::GetConstant("gammaDefault");
+        fobj->SetBeta(TimingInformation::GetConstant("betaDefault"));
+        fobj->SetGamma(TimingInformation::GetConstant("gammaDefault"));
     }
 
     vector<double> xvals;
     for(unsigned int i = 0; i < waveform.size(); i++)
         xvals.push_back(i);
 
-    VandleTimingFunction *fobj = new VandleTimingFunction();
     TF1 *f = new TF1("f", fobj, 0., 1000., 2, "VandleTimingFunction");
     f->SetParameters(5.0, qdc*0.5);
 
@@ -142,8 +142,8 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
     trace.InsertValue("phase", phase+maxPos);
     trace.InsertValue("walk", CalcWalk(maxVal, detType, detSubtype));
 
-    //plot(DD_AMP, fitPars.at(1), maxVal);
-    //plot(D_PHASE, fitPars.at(0)*1000+100);
+    plot(DD_AMP, fitResults->Value(1), maxVal);
+    plot(D_PHASE, fitResults->Value(0)*1000+100);
     //plot(D_CHISQPERDOF, chisqPerDof);
     //plot(DD_QDCMASK, chisqPerDof, maxVal);
 
