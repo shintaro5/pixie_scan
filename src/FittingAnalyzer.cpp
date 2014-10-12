@@ -21,6 +21,7 @@
 
 #include "DammPlotIds.hpp"
 #include "FittingAnalyzer.hpp"
+#include "VandleTimingFunction.hpp"
 
 namespace dammIds {
     namespace trace {
@@ -71,10 +72,9 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
 {
     TraceAnalyzer::Analyze(trace, detType, detSubtype);
 
-
     if(trace.HasValue("saturation") || trace.empty()) {
 	plot(D_SAT,2);
-     	EndAnalyze();
+        EndAnalyze();
      	return;
     }
 
@@ -95,60 +95,57 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
     plot(D_SIGMA, sigmaBaseline*100);
 
     if(sigmaBaseline > 3.0) {
-	EndAnalyze();
-	return;
+        EndAnalyze();
+        return;
     }
 
     double beta, gamma;
     if (detType == "vandleSmall") {
-	beta  = TimingInformation::GetConstant("betaVandle");
-	gamma = TimingInformation::GetConstant("gammaVandle");
+        beta  = TimingInformation::GetConstant("betaVandle");
+        gamma = TimingInformation::GetConstant("gammaVandle");
     }else if (detSubtype == "beta") {
-	beta  = TimingInformation::GetConstant("betaBeta");
-	gamma = TimingInformation::GetConstant("gammaBeta");
+        beta  = TimingInformation::GetConstant("betaBeta");
+        gamma = TimingInformation::GetConstant("gammaBeta");
     }else if(detType == "tvandle") {
-	beta  = TimingInformation::GetConstant("betaTvandle");
-	gamma = TimingInformation::GetConstant("gammaTvandle");
+        beta  = TimingInformation::GetConstant("betaTvandle");
+        gamma = TimingInformation::GetConstant("gammaTvandle");
     }else if(detType == "pulser") {
-	beta  = TimingInformation::GetConstant("betaPulser");
-	gamma = TimingInformation::GetConstant("gammaPulser");
+        beta  = TimingInformation::GetConstant("betaPulser");
+        gamma = TimingInformation::GetConstant("gammaPulser");
     }else {
-	beta  = TimingInformation::GetConstant("betaDefault");
-	gamma = TimingInformation::GetConstant("gammaDefault");
+        beta  = TimingInformation::GetConstant("betaDefault");
+        gamma = TimingInformation::GetConstant("gammaDefault");
     }
 
     vector<double> xvals;
-    for(unsigned int i = 0; i < trc_.size(); i++)
+    for(unsigned int i = 0; i < waveform.size(); i++)
         xvals.push_back(i);
 
     VandleTimingFunction *fobj = new VandleTimingFunction();
     TF1 *f = new TF1("f", fobj, 0., 1000., 2, "VandleTimingFunction");
-    f->SetParameters(maxPos_, qdc_*0.5);
+    f->SetParameters(5.0, qdc*0.5);
 
     TGraphErrors *graph =
-        new TGraphErrors(waveform_.size(), &(xvals[0]), &(waveform_[0]));
+        new TGraphErrors(waveform.size(), &(xvals[0]), &(waveform[0]));
 
-    for(unsigned int i = 0; i < waveform_.size(); i++)
-        graph->SetPointError(i, 0.0, stddev_);
+    for(unsigned int i = 0; i < waveform.size(); i++)
+        graph->SetPointError(i, 0.0, sigmaBaseline);
 
-    TFitResultPtr fitResults = graph->Fit(f,"NSQR","", waveformLowSampleNum_,
-                                          waveformHighSampleNum_);
-    fitStatus_ = fitResults;
+    TFitResultPtr fitResults = graph->Fit(f, "MENSQR", "", 0.,waveform.size());
+    double phase = fitResults->Value(0);
 
-    phase_ = fitResults->Value(0);
-
-    // cout << "Fit Status : " << fitStatus_ << " " << fitResults->Value(0)
-    //      << " " << fitResults->Value(1) << endl;
+    //cout << "Fit Status : " << fitResults << " " << fitResults->Value(0)
+    //     << " " << fitResults->Value(1) << endl;
 
     delete(f);
 
-    trace.InsertValue("phase", fitPars.front()+maxPos);
+    trace.InsertValue("phase", phase+maxPos);
     trace.InsertValue("walk", CalcWalk(maxVal, detType, detSubtype));
 
-    plot(DD_AMP, fitPars.at(1), maxVal);
-    plot(D_PHASE, fitPars.at(0)*1000+100);
-    plot(D_CHISQPERDOF, chisqPerDof);
-    plot(DD_QDCMASK, chisqPerDof, maxVal);
+    //plot(DD_AMP, fitPars.at(1), maxVal);
+    //plot(D_PHASE, fitPars.at(0)*1000+100);
+    //plot(D_CHISQPERDOF, chisqPerDof);
+    //plot(DD_QDCMASK, chisqPerDof, maxVal);
 
     EndAnalyze();
 } //void FittingAnalyzer::Analyze
@@ -176,81 +173,4 @@ double FittingAnalyzer::CalcWalk(const double &val, const string &type,
 	return(-(1.07908*log10(val)-8.27739));
     }else
 	return(0.0);
-}
-
-
-//*********** FitFunction **********
-int FitFunction (const gsl_vector * x, void *FitData, gsl_vector * f)
-{
-    size_t n       = ((struct FittingAnalyzer::FitData *)FitData)->n;
-    double *y      = ((struct FittingAnalyzer::FitData *)FitData)->y;
-    double *sigma  = ((struct FittingAnalyzer::FitData *)FitData)->sigma;
-    double beta    = ((struct FittingAnalyzer::FitData *)FitData)->beta;
-    double gamma   = ((struct FittingAnalyzer::FitData *)FitData)->gamma;
-    double qdc     = ((struct FittingAnalyzer::FitData *)FitData)->qdc;
-
-    double phi     = gsl_vector_get (x, 0);
-    double alpha   = gsl_vector_get (x, 1);
-
-    for(size_t i = 0; i < n; i++) {
-	double t = i;
-	double diff = t-phi;
-	double Yi = 0;
-
-	if(t < phi)
-	    Yi = 0;
-	else
-	    Yi = qdc * alpha * exp(-beta*diff) * (1-exp(-pow(gamma*diff,4.)));
-
-	gsl_vector_set (f, i, (Yi - y[i])/sigma[i]);
-     }
-    return(GSL_SUCCESS);
-}
-
-
-//********** CalcJacobian **********
-int CalcJacobian (const gsl_vector * x, void *FitData, gsl_matrix * J)
-{
-    size_t n = ((struct FittingAnalyzer::FitData *)FitData)->n;
-    double *sigma = ((struct FittingAnalyzer::FitData *) FitData)->sigma;
-    double beta    = ((struct FittingAnalyzer::FitData *)FitData)->beta;
-    double gamma   = ((struct FittingAnalyzer::FitData *)FitData)->gamma;
-    double qdc    = ((struct FittingAnalyzer::FitData *)FitData)->qdc;
-
-    double phi     = gsl_vector_get (x, 0);
-    double alpha   = gsl_vector_get (x, 1);
-
-    double dphi, dalpha;
-
-    for (size_t i = 0; i < n; i++) {
-	//Compute the Jacobian
- 	double t = i;
-	double diff = t-phi;
-	double gaussSq = exp(-pow(gamma*diff,4.));
- 	double s = sigma[i];
-
-	if(t < phi) {
-	    dphi   = 0;
-	    dalpha = 0;
-	}
-	else {
-	    dphi = alpha*beta*qdc*exp(-beta*diff)*(1-gaussSq) -
-		4*alpha*qdc*pow(diff,3.)*exp(-beta*diff)*pow(gamma,4.)*gaussSq;
-	    dalpha = qdc * exp(-beta*diff) * (1-gaussSq);
-	}
-
-	gsl_matrix_set (J,i,0, dphi/s);
-	gsl_matrix_set (J,i,1, dalpha/s);
-    }
-    return(GSL_SUCCESS);
-}
-
-
-//********** FitFunctionDerivative **********
-int FitFunctionDerivative (const gsl_vector * x, void *FitData, gsl_vector * f,
-			   gsl_matrix * J)
-{
-    FitFunction (x, FitData, f);
-    CalcJacobian (x, FitData, J);
-    return(GSL_SUCCESS);
 }

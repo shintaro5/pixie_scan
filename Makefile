@@ -28,7 +28,7 @@ endif
 
 #These will set the analysis used on the waveforms
 #Uncomment this line to use the Pulse Fitting routine
-#PULSEFIT = 1
+PULSEFIT = 1
 #Uncomment this line to use the cfd
 #DCFD = 1
 
@@ -92,6 +92,9 @@ GCCFLAGS += -fPIC $(CINCLUDEDIRS) -Dnewreadout
 CXXFLAGS += -Wall -g -fPIC $(CINCLUDEDIRS) -Dnewreadout
 
 ifdef REVISIOND
+ /home/vincent/upak_help_path
+DAMM->in test00.his
+Memory Map the HIS file Segment:test00.his
 CXXFLAGS += -DREVD
 endif
 ifdef REVISIONF
@@ -160,6 +163,7 @@ PLOTSO           = Plots.o
 #CFDANALYZERO     = CfdAnalyzer.o
 DOUBLETRACEO     = DoubleTraceAnalyzer.o
 FITTINGANALYZERO = FittingAnalyzer.o
+VANDLETIMINGO    = VandleTimingFunction.o
 TAUANALYZERO     = TauAnalyzer.o
 TRACEO		     = Trace.o
 TRACEEXTRACTORO  = TraceExtractor.o
@@ -222,7 +226,7 @@ CXX_OBJS += $(BETAPROCESSORO) $(DSSDPROCESSORO) $(GEPROCESSORO) \
 	$(SSDPROCESSORO) $(VALIDPROCESSORO) $(VANDLEPROCESSORO)
 
 ifdef PULSEFIT
-CXX_OBJS += $(FITTINGANALYZERO)
+CXX_OBJS += $(FITTINGANALYZERO) $(VANDLETIMINGO)
 else ifdef DCFD
 CXX_OBJS += $(CFDANALYZERO)
 endif

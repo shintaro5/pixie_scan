@@ -4,7 +4,7 @@
  * Analyzes pulser signals for electronics and high resolution
  * timing applications.
  *
- * \author S. V. Paulauskas 
+ * \author S. V. Paulauskas
  * \date 10 July 2009
  */
 #include <fstream>
@@ -18,19 +18,19 @@
 
 namespace dammIds {
     namespace pulser {
-	const int D_TIMEDIFF     = 0; 
-	const int D_PROBLEMSTUFF = 1; 
-	
-	const int DD_QDC         = 2; 
-	const int DD_MAX         = 3; 
-	const int DD_PVSP        = 4; 
-	const int DD_MAXVSTDIFF  = 5; 
-	const int DD_QDCVSMAX    = 6; 
-	const int DD_AMPMAPSTART = 7; 
-	const int DD_AMPMAPSTOP  = 8; 
+	const int D_TIMEDIFF     = 0;
+	const int D_PROBLEMSTUFF = 1;
+
+	const int DD_QDC         = 2;
+	const int DD_MAX         = 3;
+	const int DD_PVSP        = 4;
+	const int DD_MAXVSTDIFF  = 5;
+	const int DD_QDCVSMAX    = 6;
+	const int DD_AMPMAPSTART = 7;
+	const int DD_AMPMAPSTOP  = 8;
 	const int DD_SNRANDSDEV  = 9;
-	const int DD_PROBLEMS    = 13; 
-	const int DD_MAXSVSTDIFF = 14; 
+	const int DD_PROBLEMS    = 13;
+	const int DD_MAXSVSTDIFF = 14;
     }
 }
 
@@ -41,7 +41,7 @@ using namespace dammIds::pulser;
 PulserProcessor::PulserProcessor(): EventProcessor(OFFSET, RANGE)
 {
     name = "Pulser";
-    associatedTypes.insert("pulser"); 
+    associatedTypes.insert("pulser");
 }
 
 void PulserProcessor::DeclarePlots(void)
@@ -60,7 +60,7 @@ void PulserProcessor::DeclarePlots(void)
     DeclareHistogram2D(DD_PROBLEMS, SB, S5, "Problems - 2D");
 }
 
-bool PulserProcessor::Process(RawEvent &event) 
+bool PulserProcessor::Process(RawEvent &event)
 {
     if (!EventProcessor::Process(event))
 	return false;
@@ -78,22 +78,22 @@ bool PulserProcessor::Process(RawEvent &event)
 }
 
 bool PulserProcessor::RetrieveData(RawEvent &event)
-{   
+{
     pulserMap.clear();
 
-    static const vector<ChanEvent*> & pulserEvents = 
+    static const vector<ChanEvent*> & pulserEvents =
 	event.GetSummary("pulser")->GetList();
 
     for(vector<ChanEvent*>::const_iterator itPulser = pulserEvents.begin();
 	itPulser != pulserEvents.end(); itPulser++) {
-	
+
 	unsigned int location = (*itPulser)->GetChanID().GetLocation();
 	string subType = (*itPulser)->GetChanID().GetSubtype();
 
 	IdentKey pulserKey(location, subType);
 	pulserMap.insert(make_pair(pulserKey, TimingData(*itPulser)));
     }
-    
+
     if(pulserMap.empty() || pulserMap.size()%2 != 0) {
 	plot(D_PROBLEMSTUFF, 27);
 	return(false);
@@ -106,7 +106,7 @@ void PulserProcessor::AnalyzeData(void)
 {
     TimingData start = (*pulserMap.find(make_pair(0,"start"))).second;
     TimingData stop  = (*pulserMap.find(make_pair(0,"stop"))).second;
-    
+
     static int counter = 0;
     for(Trace::const_iterator it = start.trace.begin(); it!= start.trace.end(); it++)
 	plot(DD_PROBLEMS, int(it-start.trace.begin()), counter, *it);
@@ -115,24 +115,28 @@ void PulserProcessor::AnalyzeData(void)
     // unsigned int cutVal = 15;
     // if(start.maxpos == 41)
     // if(start.maxval < 2384-cutVal)
-    // 	for(Trace::const_iterator it = start.trace.begin(); 
+    // 	for(Trace::const_iterator it = start.trace.begin();
     // 	    it != start.trace.end(); it++)
     // 	    plot(DD_AMPMAPSTART, int(it-start.trace.begin()), *it);
-    
+
     // if(stop.maxval < 2555-cutVal)
-    // 	for(Trace::const_iterator it = start.trace.begin(); 
+    // 	for(Trace::const_iterator it = start.trace.begin();
     // 	    it != start.trace.end(); it++)
     // 	    plot(DD_AMPMAPSTOP, int(it-start.trace.begin()), *it);
-    
+
     //Fill histograms
-    if(start.dataValid && stop.dataValid){	
+    if(start.dataValid && stop.dataValid){
 	double timeDiff = stop.highResTime - start.highResTime;
 	double timeRes  = 50; //20 ps/bin
-	double timeOff  = 500; 
-	double phaseX   = 197100;
+	double timeOff  = 30000;
+	double phaseX   = 2000;
+
+	//cout << stop.highResTime << " " << start.highResTime << " "
+    //     << timeDiff << " " << timeDiff*timeRes+timeOff << " "
+    //     << start.phase*timeRes-phaseX << endl;
 
 	plot(D_TIMEDIFF, timeDiff*timeRes + timeOff);
-	plot(DD_PVSP, start.phase*timeRes-phaseX, 
+	plot(DD_PVSP, start.phase*timeRes-phaseX,
 	     stop.phase*timeRes-phaseX);
 
 	//Plot the Start stuff
