@@ -42,7 +42,7 @@ void WaveformAnalyzer::Analyze(Trace &trace,
 
     if(detType == "vandleSmall" || detType == "vandleBig"
        || detType == "scint" || detType == "pulser"
-       || detType == "tvandle") {
+       || detType == "tvandle" || detType == "sipmt") {
 
 	unsigned int maxPos = trace.FindMaxInfo();
 

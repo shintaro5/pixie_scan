@@ -1,7 +1,7 @@
-/** \file FittingAnalyzer.cpp
- * \brief Uses a chi^2 minimization to fit waveforms using ROOT
+/*! \file FittingAnalyzer.cpp
+ * \brief Uses a default minimization to fit waveforms using ROOT
  *
- * Obtains the phase of a waveform using a Chi^2 fitting algorithm
+ * Obtains the phase of a waveform using the default minimization
  * implemented through ROOT
  *
  * \author S. V. Paulauskas
@@ -21,8 +21,6 @@
 
 #include "DammPlotIds.hpp"
 #include "FittingAnalyzer.hpp"
-#include "SiPmtTimingFunction.hpp"
-#include "VandleTimingFunction.hpp"
 
 namespace dammIds {
     namespace trace {
@@ -66,15 +64,18 @@ FittingAnalyzer::FittingAnalyzer() : TraceAnalyzer(OFFSET,RANGE)
     name = "FittingAnalyzer";
 }
 
+FittingAnalyzer::~FittingAnalyzer() {
+    delete(vandleFunc_);
+    delete(siPmtFunc_);
+}
 
 //********** Analyze **********
 void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
-			      const string &detSubtype)
-{
+			      const string &detSubtype){
     TraceAnalyzer::Analyze(trace, detType, detSubtype);
 
     if(trace.HasValue("saturation") || trace.empty()) {
-	plot(D_SAT,2);
+        plot(D_SAT,2);
         EndAnalyze();
      	return;
     }
@@ -91,40 +92,51 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
         return;
     }
 
-    plot(DD_MAXVSQDCMAX, qdcToMax*100+100, maxVal);
-    plot(DD_MAXVALPOS, maxPos, maxVal);
-    plot(D_SIGMA, sigmaBaseline*100);
-
-    if(sigmaBaseline > 3.0) {
-        EndAnalyze();
-        return;
-    }
-
-    VandleTimingFunction *fobj = new VandleTimingFunction();
-
-    if (detType == "vandleSmall") {
-        fobj->SetBeta(TimingInformation::GetConstant("betaVandle"));
-        fobj->SetGamma(TimingInformation::GetConstant("gammaVandle"));
-    }else if (detSubtype == "beta") {
-        fobj->SetBeta(TimingInformation::GetConstant("betaBeta"));
-        fobj->SetGamma(TimingInformation::GetConstant("gammaBeta"));
-    }else if(detType == "tvandle") {
-        fobj->SetBeta(TimingInformation::GetConstant("betaTvandle"));
-        fobj->SetGamma(TimingInformation::GetConstant("gammaTvandle"));
-    }else if(detType == "pulser") {
-        fobj->SetBeta(TimingInformation::GetConstant("betaPulser"));
-        fobj->SetGamma(TimingInformation::GetConstant("gammaPulser"));
-    }else {
-        fobj->SetBeta(TimingInformation::GetConstant("betaDefault"));
-        fobj->SetGamma(TimingInformation::GetConstant("gammaDefault"));
-    }
-
     vector<double> xvals;
     for(unsigned int i = 0; i < waveform.size(); i++)
         xvals.push_back(i);
 
-    TF1 *f = new TF1("f", fobj, 0., 1000., 2, "VandleTimingFunction");
-    f->SetParameters(5.0, qdc*0.5);
+    plot(DD_MAXVSQDCMAX, qdcToMax*100+100, maxVal);
+    plot(DD_MAXVALPOS, maxPos, maxVal);
+    plot(D_SIGMA, sigmaBaseline*100);
+
+    if(sigmaBaseline > 3.0 && detType != "sipmt") {
+        EndAnalyze();
+        return;
+    }
+    if(sigmaBaseline > 25. && detType == "sipmt") {
+        EndAnalyze();
+        return;
+    }
+
+    vandleFunc_ = new VandleTimingFunction();
+    siPmtFunc_ = new SiPmtFastTimingFunction();
+
+    if (detType == "vandleSmall") {
+        vandleFunc_->SetBeta(TimingInformation::GetConstant("betaVandle"));
+        vandleFunc_->SetGamma(TimingInformation::GetConstant("gammaVandle"));
+    }else if (detSubtype == "beta") {
+        vandleFunc_->SetBeta(TimingInformation::GetConstant("betaBeta"));
+        vandleFunc_->SetGamma(TimingInformation::GetConstant("gammaBeta"));
+    }else if(detType == "tvandle") {
+        vandleFunc_->SetBeta(TimingInformation::GetConstant("betaTvandle"));
+        vandleFunc_->SetGamma(TimingInformation::GetConstant("gammaTvandle"));
+    }else if(detType == "pulser") {
+        vandleFunc_->SetBeta(TimingInformation::GetConstant("betaPulser"));
+        vandleFunc_->SetGamma(TimingInformation::GetConstant("gammaPulser"));
+    }else {
+        vandleFunc_->SetBeta(TimingInformation::GetConstant("betaDefault"));
+        vandleFunc_->SetGamma(TimingInformation::GetConstant("gammaDefault"));
+    }
+
+    TF1 *f;
+    if(detType == "sipmt") {
+        siPmtFunc_->SetSigma(TimingInformation::GetConstant("sigmaSipmt"));
+        f = new TF1("f", siPmtFunc_, 0., 1000., 2, "SiPmtFastTimingFunction");
+    } else
+        f = new TF1("f", vandleFunc_, 0., 1000., 2, "VandleTimingFunction");
+
+    f->SetParameters(7.0, qdc*0.25);
 
     TGraphErrors *graph =
         new TGraphErrors(waveform.size(), &(xvals[0]), &(waveform[0]));
@@ -132,7 +144,7 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
     for(unsigned int i = 0; i < waveform.size(); i++)
         graph->SetPointError(i, 0.0, sigmaBaseline);
 
-    TFitResultPtr fitResults = graph->Fit(f, "MENSQR", "", 0.,waveform.size());
+    TFitResultPtr fitResults = graph->Fit(f, "NSQR", "", 0., waveform.size());
     double phase = fitResults->Value(0);
 
     //cout << "Fit Status : " << fitResults << " " << fitResults->Value(0)
@@ -150,8 +162,6 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
 
     EndAnalyze();
 } //void FittingAnalyzer::Analyze
-
-
 
 //********** WalkCorrection **********
 double FittingAnalyzer::CalcWalk(const double &val, const string &type,

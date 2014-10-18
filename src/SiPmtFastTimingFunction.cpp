@@ -14,16 +14,16 @@
   *  along with this program.  If not, see <http://www.gnu.org/licenses/>. *
   **************************************************************************
 */
-/*! \file SiPmtTimingFunction.hpp
+/*! \file SiPmtFastTimingFunction.hpp
  *  \brief A class to handle the processing of traces
  *  \author S. V. Paulauskas
  *  \date 03 October 2014
  */
 #include <cmath>
 
-#include "SiPmtTimingFunction.hpp"
+#include "SiPmtFastTimingFunction.hpp"
 
-double SiPmtTimingFunction::operator()(double *x, double *par) {
+double SiPmtFastTimingFunction::operator()(double *x, double *par) {
     double phase = par[0];
     double amp = par[1];
     double diff = x[0] - phase;

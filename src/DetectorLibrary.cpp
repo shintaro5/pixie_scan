@@ -147,7 +147,8 @@ void DetectorLibrary::Set(int index, const Identifier& value)
 	     << "function inside the 'DetectorLibrary.cpp' file" << endl
 	     << endl;
 	cout << "The currently known detectors include:" << endl;
-	copy(knownDetectors.begin(), knownDetectors.end(), ostream_iterator<string>(cout, " "));
+	copy(knownDetectors.begin(), knownDetectors.end(),
+      ostream_iterator<string>(cout, " "));
 	cout << endl;
 	exit(EXIT_FAILURE);
     }
@@ -200,12 +201,14 @@ void DetectorLibrary::PrintUsedDetectors(RawEvent& rawev) const
     // Print the number of detectors and detector subtypes used in the analysis
     cout << usedTypes.size() <<" detector types are used in this analysis "
 	 << "and are named:" << endl << "  ";
-    copy(usedTypes.begin(), usedTypes.end(), ostream_iterator<string>(cout, " "));
+    copy(usedTypes.begin(), usedTypes.end(),
+         ostream_iterator<string>(cout, " "));
     cout << endl;
 
     cout << usedSubtypes.size() <<" detector subtypes are used in this "
 	 << "analysis and are named:" << endl << "  ";
-    copy(usedSubtypes.begin(), usedSubtypes.end(), ostream_iterator<string>(cout," "));
+    copy(usedSubtypes.begin(), usedSubtypes.end(),
+         ostream_iterator<string>(cout," "));
     cout << endl;
 
     rawev.Init(usedTypes);
@@ -214,16 +217,16 @@ void DetectorLibrary::PrintUsedDetectors(RawEvent& rawev) const
 /*!
   Retrieves a vector containing all detector types for which an analysis
   routine has been defined making it possible to declare this detector type
-  in the map.txt file.  The currently known detector types are in detectorStrings
+  in the map.txt file. The currently known detector types are in detectorStrings
 */
 const set<string>& DetectorLibrary::GetKnownDetectors(void)
 {
-    const unsigned int detTypes = 20;
+    const unsigned int detTypes = 21;
     const string detectorStrings[detTypes] = {
 	"dssd_front", "dssd_back", "idssd_front", "position", "timeclass",
 	"ge", "si", "scint", "mcp", "mtc", "generic", "ssd", "vandleSmall",
 	"vandleBig", "tvandle","pulser", "logic", "ion_chamber", "ignore",
-	"valid"};
+	"valid", "sipmt"};
 
     // only call this once
     if (!knownDetectors.empty())

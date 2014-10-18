@@ -14,19 +14,18 @@
   *  along with this program.  If not, see <http://www.gnu.org/licenses/>. *
   **************************************************************************
 */
-
-/*! \file SiPmtTimingFunction.hpp
+/*! \file SiPmtFastTimingFunction.hpp
  *  \brief A class to handle the processing of traces
  *  \author S. V. Paulauskas
  *  \date 03 October 2014
  */
-#ifndef __SIPMTTIMINGFUNCITON__HPP__
-#define __SIPMTTIMINGFUNCITON__HPP__
+#ifndef __SIPMTFASTTIMINGFUNCITON__HPP__
+#define __SIPMTFASTTIMINGFUNCITON__HPP__
 
-class SiPmtTimingFunction {
+class SiPmtFastTimingFunction {
 public:
-    SiPmtTimingFunction() {};
-    ~SiPmtTimingFunction(){};
+    SiPmtFastTimingFunction() {};
+    ~SiPmtFastTimingFunction(){};
 
     double operator() (double *x, double *p);
 

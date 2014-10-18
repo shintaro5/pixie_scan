@@ -42,6 +42,7 @@ PulserProcessor::PulserProcessor(): EventProcessor(OFFSET, RANGE)
 {
     name = "Pulser";
     associatedTypes.insert("pulser");
+    associatedTypes.insert("sipmt");
 }
 
 void PulserProcessor::DeclarePlots(void)
@@ -83,8 +84,20 @@ bool PulserProcessor::RetrieveData(RawEvent &event) {
     static const vector<ChanEvent*> & pulserEvents =
         event.GetSummary("pulser")->GetList();
 
+    static const vector<ChanEvent*> & sipmtEvents =
+        event.GetSummary("sipmt")->GetList();
+
     for(vector<ChanEvent*>::const_iterator itPulser = pulserEvents.begin();
 	itPulser != pulserEvents.end(); itPulser++) {
+        unsigned int location = (*itPulser)->GetChanID().GetLocation();
+        string subType = (*itPulser)->GetChanID().GetSubtype();
+
+        IdentKey pulserKey(location, subType);
+        pulserMap.insert(make_pair(pulserKey, TimingData(*itPulser)));
+    }
+
+    for(vector<ChanEvent*>::const_iterator itPulser = sipmtEvents.begin();
+	itPulser != sipmtEvents.end(); itPulser++) {
         unsigned int location = (*itPulser)->GetChanID().GetLocation();
         string subType = (*itPulser)->GetChanID().GetSubtype();
 
@@ -125,30 +138,30 @@ void PulserProcessor::AnalyzeData(void) {
     if(start.dataValid && stop.dataValid){
         double timeDiff = stop.highResTime - start.highResTime;
         double timeRes  = 50; //20 ps/bin
-	double timeOff  = 30000;
-	double phaseX   = 2000;
+        double timeOff  = 30000;
+        double phaseX   = 4000;
 
-	//cout << stop.highResTime << " " << start.highResTime << " "
-    //     << timeDiff << " " << timeDiff*timeRes+timeOff << " "
-    //     << start.phase*timeRes-phaseX << endl;
+//        cout << stop.highResTime << " " << start.highResTime << " "
+//             << timeDiff << " " << timeDiff*timeRes+timeOff << " "
+//             << start.phase*timeRes-phaseX << endl;
 
-	plot(D_TIMEDIFF, timeDiff*timeRes + timeOff);
-	plot(DD_PVSP, start.phase*timeRes-phaseX,
-	     stop.phase*timeRes-phaseX);
+        plot(D_TIMEDIFF, timeDiff*timeRes + timeOff);
+        plot(DD_PVSP, start.phase*timeRes-phaseX,
+            stop.phase*timeRes-phaseX);
 
-	//Plot the Start stuff
-	plot(DD_QDC, start.tqdc, 0);
-	plot(DD_MAX, start.maxval, 0);
-	plot(DD_MAXVSTDIFF, timeDiff*timeRes+timeOff, start.maxval);
-	plot(DD_QDCVSMAX, start.maxval, start.tqdc);
-	//Plot the Stop stuff
-	plot(DD_QDC, stop.tqdc, 1);
-	plot(DD_MAX, stop.maxval, 1);
+        //Plot the Start stuff
+        plot(DD_QDC, start.tqdc, 0);
+        plot(DD_MAX, start.maxval, 0);
+        plot(DD_MAXVSTDIFF, timeDiff*timeRes+timeOff, start.maxval);
+        plot(DD_QDCVSMAX, start.maxval, start.tqdc);
+        //Plot the Stop stuff
+        plot(DD_QDC, stop.tqdc, 1);
+        plot(DD_MAX, stop.maxval, 1);
 
-	//Plot information about the SNR
-	plot(DD_SNRANDSDEV, start.snr+50, 0);
-	plot(DD_SNRANDSDEV, start.stdDevBaseline*timeRes+timeOff, 1);
-	plot(DD_SNRANDSDEV, stop.snr+50, 2);
-	plot(DD_SNRANDSDEV, stop.stdDevBaseline*timeRes+timeOff, 3);
+        //Plot information about the SNR
+        plot(DD_SNRANDSDEV, start.snr+50, 0);
+        plot(DD_SNRANDSDEV, start.stdDevBaseline*timeRes+timeOff, 1);
+        plot(DD_SNRANDSDEV, stop.snr+50, 2);
+        plot(DD_SNRANDSDEV, stop.stdDevBaseline*timeRes+timeOff, 3);
     }
 } // void PulserProcessor::AnalyzeData
