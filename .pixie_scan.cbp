@@ -58,6 +58,7 @@
 		<Unit filename="include/DetectorSummary.hpp" />
 		<Unit filename="include/DoubleTraceAnalyzer.hpp" />
 		<Unit filename="include/DssdProcessor.hpp" />
+		<Unit filename="include/EmCalTimingFunction.hpp" />
 		<Unit filename="include/EventProcessor.hpp" />
 		<Unit filename="include/Exceptions.hpp" />
 		<Unit filename="include/FittingAnalyzer.hpp" />
@@ -127,6 +128,7 @@
 		<Unit filename="src/DetectorSummary.cpp" />
 		<Unit filename="src/DoubleTraceAnalyzer.cpp" />
 		<Unit filename="src/DssdProcessor.cpp" />
+		<Unit filename="src/EmCalTimingFunction.cpp" />
 		<Unit filename="src/EventProcessor.cpp" />
 		<Unit filename="src/FittingAnalyzer.cpp" />
 		<Unit filename="src/GeProcessor.cpp" />

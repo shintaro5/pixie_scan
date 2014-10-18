@@ -68,19 +68,9 @@
 
 #ifdef useroot
 #include "RootProcessor.hpp"
-#include "ScintROOT.hpp"
-#include "VandleROOT.hpp"
 #endif
 
 using namespace std;
-using namespace dammIds::raw;
-
-/*!
-  detector driver constructor
-
-  Creates instances of all event processors
-*/
-
 using namespace dammIds::raw;
 
 DetectorDriver* DetectorDriver::instance = NULL;
@@ -93,6 +83,9 @@ DetectorDriver* DetectorDriver::get() {
     return instance;
 }
 
+/*! detector driver constructor
+  Creates instances of all event processors
+*/
 DetectorDriver::DetectorDriver() : histo(OFFSET, RANGE)
 {
     cout << "DetectorDriver: loading processors" << endl;
@@ -107,8 +100,6 @@ DetectorDriver::DetectorDriver() : histo(OFFSET, RANGE)
 
     vecProcess.push_back(new PulserProcessor()); // order is important
 #ifdef useroot
-    // vecProcess.push_back(new ScintROOT());
-    // vecProcess.push_back(new VandleROOT());
     //vecProcess.push_back(new RootProcessor("tree.root", "tree"));
 #endif
 }
