@@ -136,7 +136,7 @@ void FittingAnalyzer::Analyze(Trace &trace, const string &detType,
     } else
         f = new TF1("f", vandleFunc_, 0., 1000., 2, "VandleTimingFunction");
 
-    f->SetParameters(7.0, qdc*0.25);
+    f->SetParameters(TimingInformation::GetConstant("waveformLow"), qdc);
 
     TGraphErrors *graph =
         new TGraphErrors(waveform.size(), &(xvals[0]), &(waveform[0]));
