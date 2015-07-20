@@ -54,9 +54,9 @@ void BarBuilder::FillMaps(void) {
         HighResTimingData data((*it));
 
         if(!data.GetIsValidData())
-            continue;
-
-        if(id.HasTag("left") || id.HasTag("up") || id.HasTag("top"))
+	  continue;
+	
+	if(id.HasTag("left") || id.HasTag("up") || id.HasTag("top"))
             lefts_.insert(make_pair(key,data));
         if(id.HasTag("right") || id.HasTag("down") || id.HasTag("bottom"))
             rights_.insert(make_pair(key,data));

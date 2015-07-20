@@ -44,6 +44,8 @@
 #include "VandleProcessor.hpp"
 #include "ValidProcessor.hpp"
 
+#include "IS600Processor.hpp"
+
 #include "CfdAnalyzer.hpp"
 #include "DoubleTraceAnalyzer.hpp"
 #include "FittingAnalyzer.hpp"
@@ -258,6 +260,13 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
             vector<string> types =
                 strings::tokenize(processor.attribute("types").as_string(),",");
             vecProcess.push_back(new VandleProcessor(types, res, offset, numStarts));
+	}else if (name == "IS600Processor") {
+            double res = processor.attribute("res").as_double(2.0);
+            double offset = processor.attribute("offset").as_double(200.0);
+            unsigned int numStarts = processor.attribute("NumStarts").as_int(2);
+            vector<string> types =
+                strings::tokenize(processor.attribute("types").as_string(),",");
+            vecProcess.push_back(new IS600Processor(types, res, offset, numStarts));
         } else if (name == "TeenyVandleProcessor") {
             vecProcess.push_back(new TeenyVandleProcessor());
         } else if (name == "DoubleBetaProcessor") {
@@ -270,7 +279,7 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
 #endif
         else {
             stringstream ss;
-            ss << "DetectorDriver: unknown processor type" << name;
+            ss << "DetectorDriver: unknown processor type " << name;
             throw GeneralException(ss.str());
         }
         stringstream ss;
@@ -553,6 +562,9 @@ int DetectorDriver::ThreshAndCal(ChanEvent *chan, RawEvent& rawev) {
 
     if ( !trace.empty() ) {
         plot(D_HAS_TRACE, id);
+
+	if(chanId.HasTag("sipm"))
+	  trace.InsertValue("sipm",1);
 
         for (vector<TraceAnalyzer *>::iterator it = vecAnalyzer.begin();
             it != vecAnalyzer.end(); it++) {

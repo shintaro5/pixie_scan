@@ -164,7 +164,7 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     f.n = sizeFit;
     f.params = &data;
 
-    if(detType != "beta" && detSubtype != "double") {
+    if(!trace.HasValue("sipm")) {
         numParams = 2;
         covar = gsl_matrix_alloc (numParams, numParams);
         xInit[0] = 0.0; xInit[1]=2.5;

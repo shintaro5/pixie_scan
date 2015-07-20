@@ -215,7 +215,8 @@ Globals::Globals() {
                 singleBetaPars_.second =
                     it->child("Gamma").attribute("value").as_double();
             }else if(std::string(it->name()).compare("DoubleBeta") == 0) {
-                doubleBetaPars_.first = 0.0;
+                doubleBetaPars_.first = 
+   		    it->child("Beta").attribute("value").as_double(0.0);
                 doubleBetaPars_.second =
                     it->child("Gamma").attribute("value").as_double();
             }else if (std::string(it->name()).compare("Pulser") == 0) {

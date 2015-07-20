@@ -34,7 +34,7 @@ DoubleBetaProcessor::DoubleBetaProcessor():
 void DoubleBetaProcessor::DeclarePlots(void) {
     DeclareHistogram2D(DD_SINGLESQDC, SD, S3, "Location vs. Singles QDC");
     DeclareHistogram2D(DD_QDC, SD, S3, "Location vs. Coincident QDC");
-    DeclareHistogram2D(DD_TDIFF, SB, S3, "Location vs. Time Difference");
+    DeclareHistogram2D(DD_TDIFF, SD, S3, "Location vs. Time Difference");
     DeclareHistogram2D(DD_PP, SC, SC,"Phase vs. Phase - Bar 0 Only");
     DeclareHistogram2D(DD_QDCTDIFF, SC, SC,"TimeDiff vs. Coincident QDC");
 }
@@ -55,7 +55,7 @@ bool DoubleBetaProcessor::PreProcess(RawEvent &event) {
     betas_ = builder.GetBarMap();
 
     double resolution = 2;
-    double offset = 1500;
+    double offset = 2500;
 
     for(BarMap::const_iterator it = betas_.begin(); it != betas_.end(); it++) {
         unsigned int barNum = (*it).first.first;

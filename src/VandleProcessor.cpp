@@ -82,8 +82,8 @@ void VandleProcessor::DeclarePlots(void) {
     if(hasSmall_) {
         DeclareHistogram2D(DD_TQDCBARS, SD, S8,
         "Det Loc vs Trace QDC - Left Even - Right Odd");
-//        DeclareHistogram2D(DD_MAXIMUMBARS, SD, S8,
-//        "Det Loc vs Maximum - Left Even - Right Odd");
+        DeclareHistogram2D(DD_MAXIMUMBARS, SC, S8,
+        "Det Loc vs Maximum - Left Even - Right Odd");
         DeclareHistogram2D(DD_TIMEDIFFBARS, S9, S8,
         "Bars vs. Time Differences");
         DeclareHistogram2D(DD_TOFBARS, SC, S8,
@@ -110,8 +110,8 @@ void VandleProcessor::DeclarePlots(void) {
     if(hasBig_) {
         DeclareHistogram2D(DD_TQDCBARS+BIG_OFFSET, SD, S8,
         "Det Loc vs Trace QDC");
-//        DeclareHistogram2D(DD_MAXIMUMBARS+BIG_OFFSET, SD, S8,
-//        "Det Loc vs Maximum");
+        //DeclareHistogram2D(DD_MAXIMUMBARS+BIG_OFFSET, SC, S8,
+        //"Det Loc vs Maximum");
         DeclareHistogram2D(DD_TIMEDIFFBARS+BIG_OFFSET, S9, S8,
         "Bars vs. Time Differences");
         DeclareHistogram2D(DD_TOFBARS+BIG_OFFSET, SC, S8,
@@ -138,8 +138,8 @@ void VandleProcessor::DeclarePlots(void) {
     if(hasMed_) {
         DeclareHistogram2D(DD_TQDCBARS+MED_OFFSET, SD, S8,
         "Det Loc vs Trace QDC");
-//        DeclareHistogram2D(DD_MAXIMUMBARS+MED_OFFSET, SD, S8,
-//        "Det Loc vs Maximum");
+        DeclareHistogram2D(DD_MAXIMUMBARS+MED_OFFSET, SC, S8,
+        "Det Loc vs Maximum");
         DeclareHistogram2D(DD_TIMEDIFFBARS+MED_OFFSET, S9, S8,
         "Bars vs. Time Differences");
         DeclareHistogram2D(DD_TOFBARS+MED_OFFSET, SC, S8,
@@ -179,6 +179,7 @@ void VandleProcessor::DeclarePlots(void) {
 bool VandleProcessor::PreProcess(RawEvent &event) {
     if (!EventProcessor::PreProcess(event))
         return false;
+    plot(D_DEBUGGING, 20);
 
     ClearMaps();
 

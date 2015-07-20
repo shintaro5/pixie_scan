@@ -53,7 +53,6 @@ public:
         TrapezoidalFilter(filter, parms, lo, size());
     }
 
-
     /**
     * Defines how to implement a trapezoidal filter characterized by two
     * moving sum windows of width risetime separated by a length gaptime.
