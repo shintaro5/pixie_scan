@@ -84,7 +84,7 @@ void VandleProcessor::DeclarePlots(void) {
         "Det Loc vs Trace QDC - Left Even - Right Odd");
         DeclareHistogram2D(DD_MAXIMUMBARS, SC, S8,
         "Det Loc vs Maximum - Left Even - Right Odd");
-        DeclareHistogram2D(DD_TIMEDIFFBARS, S9, S8,
+        DeclareHistogram2D(DD_TIMEDIFFBARS, SC, S8,
         "Bars vs. Time Differences");
         DeclareHistogram2D(DD_TOFBARS, SC, S8,
         "Bar vs. Time of Flight");
@@ -140,7 +140,7 @@ void VandleProcessor::DeclarePlots(void) {
         "Det Loc vs Trace QDC");
         DeclareHistogram2D(DD_MAXIMUMBARS+MED_OFFSET, SC, S8,
         "Det Loc vs Maximum");
-        DeclareHistogram2D(DD_TIMEDIFFBARS+MED_OFFSET, S9, S8,
+        DeclareHistogram2D(DD_TIMEDIFFBARS+MED_OFFSET, SC, S8,
         "Bars vs. Time Differences");
         DeclareHistogram2D(DD_TOFBARS+MED_OFFSET, SC, S8,
         "Bar vs. Time of Flight");

@@ -488,19 +488,19 @@ bool GeProcessor::Process(RawEvent &event) {
      *  This condition will therefore skip events registered during
      *  tape movement period and before the end of move and the beam start
      */
-    if (!TreeCorrelator::get()->place("Cycle")->status()) {
-        for (vector<ChanEvent*>::iterator it = geEvents_.begin();
-        it != geEvents_.end(); ++it) {
-            ChanEvent* chan = *it;
-            double gEnergy = chan->GetCalEnergy();
-            if (gEnergy < gammaThreshold_)
-                continue;
-            plot(D_ENERGY_MOVE, gEnergy);
-            if (hasBeta)
-                plot(betaGated::D_ENERGY_MOVE, gEnergy);
-        }
-        return true;
-    }
+    // if (!TreeCorrelator::get()->place("Cycle")->status()) {
+    //     for (vector<ChanEvent*>::iterator it = geEvents_.begin();
+    //     it != geEvents_.end(); ++it) {
+    //         ChanEvent* chan = *it;
+    //         double gEnergy = chan->GetCalEnergy();
+    //         if (gEnergy < gammaThreshold_)
+    //             continue;
+    //         plot(D_ENERGY_MOVE, gEnergy);
+    //         if (hasBeta)
+    //             plot(betaGated::D_ENERGY_MOVE, gEnergy);
+    //     }
+    //     return true;
+    // }
 
     plot(D_MULT, geEvents_.size());
 

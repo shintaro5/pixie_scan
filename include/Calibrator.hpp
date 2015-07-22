@@ -21,6 +21,7 @@ enum CalibrationModel {
     cal_linear,
     cal_quadratic,
     cal_cubic,
+    cal_quartic,
     cal_polynomial,
     cal_hyplin,
     cal_exp,
@@ -103,6 +104,14 @@ private:
      * \param [in] raw : the raw value to calibrate
      * \return Calibrated energy */
     double ModelCubic(const std::vector<double>& par, double raw) const;
+
+  /** Quartic calibration, parameters are assumed to be sorted
+   *in order par0, par1, par2, par3, par4
+   *f(x) = par0 + par1 * x  + par2 * x^2 + par3 * x^3 + par4 * x^4
+   * \param [in] par : the vector of calibration coeffs
+   * \param [in] raw : the raw value to calibrate
+   * \return Calibrated energy */
+  double ModelQuartic(const std::vector<double>& par, double raw) const;
 
     /** Polynomial calibration, where parameters are assumed to be sorted
      * from the lowest order to the highest

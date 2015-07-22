@@ -29,6 +29,9 @@ void Calibrator::AddChannel(const Identifier& chanID, const std::string model,
     } else if (model == "cubic") {
         cf.model = cal_cubic;
         required_parameters = 4;
+    } else if (model == "quartic") {
+      cf.model = cal_quartic;
+      required_parameters = 5;
     } else if (model == "polynomial") {
         cf.model = cal_polynomial;
         required_parameters = 1;
@@ -106,6 +109,9 @@ double Calibrator::GetCalEnergy(const Identifier& chanID, double raw) const {
             case cal_cubic:
                 return ModelCubic(itf->parameters, raw);
                 break;
+	    case cal_quartic:
+	      return ModelQuartic(itf->parameters, raw);
+	      break;
             case cal_polynomial:
                 return ModelPolynomial(itf->parameters, raw);
                 break;
@@ -143,6 +149,10 @@ double Calibrator::ModelQuadratic(const std::vector<double>& par,
 double Calibrator::ModelCubic(const std::vector<double>& par,
                               double raw) const {
     return(par[0] + par[1]*raw + par[2]*raw*raw + par[3]*raw*raw*raw);
+}
+
+double Calibrator::ModelQuartic(const std::vector<double>& par, double raw) const {
+  return(par[0] + par[1]*raw + par[2]*raw*raw + par[3]*raw*raw*raw + par[4]*raw*raw*raw*raw);
 }
 
 double Calibrator::ModelPolynomial(const std::vector<double>& par,
