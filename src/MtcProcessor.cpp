@@ -74,6 +74,7 @@ bool MtcProcessor::PreProcess(RawEvent &event) {
 
     static const vector<ChanEvent*> &mtcEvents =
         event.GetSummary("mtc", true)->GetList();
+
     for (vector<ChanEvent*>::const_iterator it = mtcEvents.begin();
 	 it != mtcEvents.end(); it++) {
         string subtype = (*it)->GetChanID().GetSubtype();
@@ -91,7 +92,6 @@ bool MtcProcessor::PreProcess(RawEvent &event) {
         double time_x = int((time - t0) / eventsResolution);
 
         if(place == "mtc_start_0") {
-
             double dt_start = time -
                      TreeCorrelator::get()->place(place)->secondlast().time;
             TreeCorrelator::get()->place("TapeMove")->activate(time);
@@ -100,9 +100,7 @@ bool MtcProcessor::PreProcess(RawEvent &event) {
             plot(D_TDIFF_MOVE_START, dt_start / mtcPlotResolution);
             plot(D_COUNTER, MOVE_START_BIN);
             plot(DD_TIME__DET_MTCEVENTS, time_x, MTC_START);
-
         } else if (place == "mtc_stop_0") {
-
             double dt_stop = time -
                      TreeCorrelator::get()->place(place)->secondlast().time;
             double dt_move = time -
@@ -113,9 +111,7 @@ bool MtcProcessor::PreProcess(RawEvent &event) {
             plot(D_MOVETIME, dt_move / mtcPlotResolution);
             plot(D_COUNTER, MOVE_STOP_BIN);
             plot(DD_TIME__DET_MTCEVENTS, time_x, MTC_STOP);
-
         } else if (place == "mtc_beam_start_0") {
-
             double dt_start = time -
                       TreeCorrelator::get()->place(place)->secondlast().time;
             //Remove double starts
@@ -132,9 +128,7 @@ bool MtcProcessor::PreProcess(RawEvent &event) {
             plot(D_TDIFF_BEAM_START, dt_start / mtcPlotResolution);
             plot(D_COUNTER, BEAM_START_BIN);
             plot(DD_TIME__DET_MTCEVENTS, time_x, BEAM_START);
-
         } else if (place == "mtc_beam_stop_0") {
-
             double dt_stop = time -
                 TreeCorrelator::get()->place(place)->secondlast().time;
             double dt_beam = time -
@@ -151,7 +145,6 @@ bool MtcProcessor::PreProcess(RawEvent &event) {
             plot(D_BEAMTIME, dt_beam / mtcPlotResolution);
             plot(D_COUNTER, BEAM_STOP_BIN);
             plot(DD_TIME__DET_MTCEVENTS, time_x, BEAM_STOP);
-
         }
     }
     return true;
