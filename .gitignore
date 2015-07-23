@@ -12,6 +12,13 @@ pixie_ldf_*
 html/
 latex/
 tmp/
+ExperimentProcessors/
+OptionalConfigurations/
+his
+rescan/
+scripts/gain.cmd
+scripts/qrun.bash
+scripts/strip.bash
 doc/classdiagramRawEvent.svg
 config/cfgs
 optional
