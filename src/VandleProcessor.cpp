@@ -156,7 +156,7 @@ void VandleProcessor::DeclarePlots(void) {
 //        "<E> VANDLE vs. <E> BETA - SUMMED");
 //        DeclareHistogram2D(DD_TOFVSSTARTQDCSUM+MED_OFFSET, SC, SD,
 //        "TOF VANDLE vs. <E> BETA - SUMMED");
-        DeclareHistogram2D(DD_GAMMAENERGYVSTOF+MED_OFFSET, SC, S9,
+        DeclareHistogram2D(DD_GAMMAENERGYVSTOF+MED_OFFSET, SC, SC,
         "C-ToF vs. E_gamma");
 //        DeclareHistogram2D(DD_TQDCAVEVSTOF_VETO+MED_OFFSET, SC, SD,
 //        "<E> VANDLE vs. CorTOF VANDLE - Gamma Veto");
@@ -198,11 +198,13 @@ bool VandleProcessor::PreProcess(RawEvent &event) {
     bars_ = billy.GetBarMap();
 
     if(bars_.empty()) {
+        TreeCorrelator::get()->place("Vandle")->deactivate(0.0);
         plot(D_DEBUGGING, 25);
         return(false);
     }
 
     FillVandleOnlyHists();
+    TreeCorrelator::get()->place("Vandle")->activate(0.0);
     return(true);
 }
 
@@ -291,7 +293,7 @@ void VandleProcessor::AnalyzeBarStarts(void) {
                     for (vector<ChanEvent *>::const_iterator itGe = geList.begin();
                         itGe != geList.end(); itGe++) {
                         double calEnergy = (*itGe)->GetCalEnergy();
-                        plot(DD_GAMMAENERGYVSTOF+histTypeOffset, calEnergy, tof);
+                        plot(DD_GAMMAENERGYVSTOF+histTypeOffset, calEnergy, corTof*plotMult_+plotOffset_);
                     }
                 } else {
                     plot(DD_TQDCAVEVSTOF_VETO+histTypeOffset, tof, bar.GetQdc());
@@ -343,7 +345,7 @@ void VandleProcessor::AnalyzeStarts(void) {
                     for (vector<ChanEvent *>::const_iterator itGe = geList.begin();
                         itGe != geList.end(); itGe++) {
                         double calEnergy = (*itGe)->GetCalEnergy();
-                        plot(DD_GAMMAENERGYVSTOF+histTypeOffset, calEnergy, tof);
+			plot(DD_GAMMAENERGYVSTOF+histTypeOffset, calEnergy, corTof*plotMult_+plotOffset_);
                     }
                 } else {
                     plot(DD_TQDCAVEVSTOF_VETO+histTypeOffset, tof, bar.GetQdc());

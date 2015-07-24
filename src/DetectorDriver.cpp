@@ -47,6 +47,7 @@
 #include "IS600Processor.hpp"
 #include "IS600LogicProcessor.hpp"
 #include "IS600GeProcessor.hpp"
+#include "IS600DoubleBetaProcessor.hpp"
 
 #include "CfdAnalyzer.hpp"
 #include "DoubleTraceAnalyzer.hpp"
@@ -277,8 +278,11 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
 	      vecProcess.push_back(new IS600Processor(types, res, offset, numStarts));
 	} else if (name == "TeenyVandleProcessor") {
             vecProcess.push_back(new TeenyVandleProcessor());
-        } else if (name == "DoubleBetaProcessor") {
+        } else if (name == "DoubleBetaProcessor" || name == "IS600DoubleBetaProcessor") {
+	  if(name == "DoubleBetaProcessor")
             vecProcess.push_back(new DoubleBetaProcessor());
+	  if(name == "IS600DoubleBetaProcessor")
+            vecProcess.push_back(new IS600DoubleBetaProcessor());
         }
 #ifdef useroot
         else if (name == "RootProcessor") {
