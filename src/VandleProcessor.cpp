@@ -198,13 +198,11 @@ bool VandleProcessor::PreProcess(RawEvent &event) {
     bars_ = billy.GetBarMap();
 
     if(bars_.empty()) {
-        TreeCorrelator::get()->place("Vandle")->deactivate(0.0);
         plot(D_DEBUGGING, 25);
         return(false);
     }
 
     FillVandleOnlyHists();
-    TreeCorrelator::get()->place("Vandle")->activate(0.0);
     return(true);
 }
 
