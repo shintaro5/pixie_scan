@@ -1,6 +1,6 @@
 #!/bin/bash
 
-name="test00"
+name="rescan-052k"
 data="/home/pixie16/isoldeData/is599/052k/"
 confs="/home/pixie16/svp/OptionalConfigurations/is599"
 
@@ -15,4 +15,7 @@ cmd="ban 051k.ban\nfile $data/is599_52k_01.ldf\ngo\nend"
 echo -e $cmd | ./pixie_ldf_c $name
 
 cmd="ban 051k.ban\nfile $data/is599_52k_02.ldf\ngo\nend"
+echo -e $cmd | ./pixie_ldf_c $name
+
+cmd="ban 051k.ban\nfile $data/is599_52k_0.ldf\ngo\nend"
 echo -e $cmd | ./pixie_ldf_c $name

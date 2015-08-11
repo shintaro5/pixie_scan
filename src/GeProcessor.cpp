@@ -404,17 +404,17 @@ bool GeProcessor::PreProcess(RawEvent &event) {
         if ( (*itHigh)->IsSaturated() || (*itHigh)->IsPileup() )
             continue;
 
-        vector <ChanEvent*>::const_iterator itLow = lowEvents.begin();
-        for (; itLow != lowEvents.end(); itLow++) {
-            if ( (*itLow)->GetChanID().GetLocation() == location ) {
-                break;
-            }
-        }
-        if ( itLow != lowEvents.end() ) {
-            double ratio = (*itHigh)->GetEnergy() / (*itLow)->GetEnergy();
-            if (ratio < lowRatio_ || ratio > highRatio_)
-                continue;
-        }
+        // vector <ChanEvent*>::const_iterator itLow = lowEvents.begin();
+        // for (; itLow != lowEvents.end(); itLow++) {
+        //     if ( (*itLow)->GetChanID().GetLocation() == location ) {
+        //         break;
+        //     }
+        // }
+        // if ( itLow != lowEvents.end() ) {
+        //     double ratio = (*itHigh)->GetEnergy() / (*itLow)->GetEnergy();
+        //     if (ratio < lowRatio_ || ratio > highRatio_)
+        //         continue;
+        // }
         geEvents_.push_back(*itHigh);
     }
 
