@@ -17,5 +17,5 @@ echo -e $cmd | ./pixie_ldf_c $name
 cmd="ban 051k.ban\nfile $data/is599_52k_02.ldf\ngo\nend"
 echo -e $cmd | ./pixie_ldf_c $name
 
-cmd="ban 051k.ban\nfile $data/is599_52k_0.ldf\ngo\nend"
+cmd="ban 051k.ban\nfile $data/is599_52k_03.ldf\ngo\nend"
 echo -e $cmd | ./pixie_ldf_c $name

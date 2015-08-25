@@ -36,8 +36,6 @@ endif
 endif
 endif
 
-EXTRA_PROCESSORS=/home/pixie16/svp/ExperimentProcessors
-
 ifneq ($(EXTRA_PROCESSORS),)
 vpath %.cpp $(EXTRA_PROCESSORS)/src
 vpath %.hpp $(EXTRA_PROCESSORS)/inc

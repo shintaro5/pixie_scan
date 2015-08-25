@@ -89,6 +89,7 @@ int ReadBuffDataDF(word_t *buf, unsigned long *bufLen,
     /* Read the module number */
     modNum = *buf++;
     ChanEvent *lastVirtualChannel = NULL;
+
     if(*bufLen > 0) {   // check if the buffer has data
         if(*bufLen == 2) {
             // this is an empty channel
@@ -116,6 +117,7 @@ int ReadBuffDataDF(word_t *buf, unsigned long *bufLen,
                 numEvents = readbuff::STATS;
                 continue;
             }
+
             if(headerLength != 4  && headerLength != 8 &&
                 headerLength != 12 && headerLength != 16) {
                 cout << "  Unexpected header length: " << headerLength << endl;
@@ -172,6 +174,7 @@ int ReadBuffDataDF(word_t *buf, unsigned long *bufLen,
             currentEvt->eventTimeHi = highTime;
             currentEvt->eventTimeLo = lowTime;
             currentEvt->time = highTime * HIGH_MULT + lowTime;
+
             buf += headerLength;
             /* Check if trace data follows the channel header */
             if(traceLength > 0) {
