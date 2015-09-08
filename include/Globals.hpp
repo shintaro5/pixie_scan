@@ -196,6 +196,8 @@ public:
     std::pair<unsigned int, unsigned int> waveformRange() const {return(waveformRange_);}
     /** \return the waveform range for a fast SiPMT signal */
     std::pair<unsigned int, unsigned int> siPmtWaveformRange() const {return(siPmtWaveformRange_);}
+    /** \return the waveform range for a fast LaBr3 signal */
+    std::pair<unsigned int, unsigned int> labr3WaveformRange() const {return(labr3WaveformRange_);}
     /** \return the small VANDLE fitting parameters */
     std::pair<double,double> smallVandlePars() {return(smallVandlePars_);}
     /** \return the medium VANDLE fitting parameters */
@@ -274,6 +276,7 @@ private:
     int eventWidth_; //!< the size of the events
     std::pair<unsigned int, unsigned int> waveformRange_; //!< Range for the waveform
     std::pair<unsigned int, unsigned int> siPmtWaveformRange_; //!< Range for the waveform of a Fast SiPmt
+    std::pair<unsigned int, unsigned int> labr3WaveformRange_; //!< Range for the waveform of a LaBr3
     std::pair<double,double> smallVandlePars_;//!< small VANDLE parameters for fitting
     std::pair<double,double> mediumVandlePars_;//!< medium VANDLE parameters for fitting
     std::pair<double,double> bigVandlePars_;//!< big VANDLE parameters for fitting
