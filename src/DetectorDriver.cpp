@@ -44,10 +44,7 @@
 #include "VandleProcessor.hpp"
 #include "ValidProcessor.hpp"
 
-#include "IS600Processor.hpp"
-#include "IS600LogicProcessor.hpp"
-#include "IS600GeProcessor.hpp"
-#include "IS600DoubleBetaProcessor.hpp"
+#include "Labr3TestProcessor.hpp"
 
 #include "CfdAnalyzer.hpp"
 #include "DoubleTraceAnalyzer.hpp"
@@ -220,13 +217,6 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
                             cycle_gate1_min, cycle_gate1_max,
                             cycle_gate2_min, cycle_gate2_max));
             }
-	    if (name == "IS600GeProcessor") {
-	      vecProcess.push_back(new IS600GeProcessor(gamma_threshold,
-                            low_ratio, high_ratio, sub_event,
-                            gamma_beta_limit, gamma_gamma_limit,
-                            cycle_gate1_min, cycle_gate1_max,
-                            cycle_gate2_min, cycle_gate2_max));
-	    }
         } else if (name == "GeCalibProcessor") {
             double gamma_threshold =
                 processor.attribute("gamma_threshold").as_double(1);
@@ -254,8 +244,6 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
             bool double_start = processor.attribute("double_start").as_bool();
 	    if(name == "MtcProcessor")
 	      vecProcess.push_back(new MtcProcessor(double_stop, double_start));
-	    if(name == "IS600LogicProcessor")
-	      vecProcess.push_back(new IS600LogicProcessor(double_stop, double_start));
         } else if (name == "NeutronScintProcessor") {
             vecProcess.push_back(new NeutronScintProcessor());
         } else if (name == "PositionProcessor") {
@@ -266,7 +254,7 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
             vecProcess.push_back(new SsdProcessor());
         } else if (name == "TriggerLogicProcessor") {
             vecProcess.push_back(new TriggerLogicProcessor());
-        } else if (name == "VandleProcessor" || name == "IS600Processor") {
+        } else if (name == "VandleProcessor") {
             double res = processor.attribute("res").as_double(2.0);
             double offset = processor.attribute("offset").as_double(200.0);
             unsigned int numStarts = processor.attribute("NumStarts").as_int(2);
@@ -274,16 +262,13 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
                 strings::tokenize(processor.attribute("types").as_string(),",");
 	    if(name == "VandleProcessor")
 	      vecProcess.push_back(new VandleProcessor(types, res, offset, numStarts));
-	    if(name == "IS600Processor")
-	      vecProcess.push_back(new IS600Processor(types, res, offset, numStarts));
 	} else if (name == "TeenyVandleProcessor") {
             vecProcess.push_back(new TeenyVandleProcessor());
         } else if (name == "DoubleBetaProcessor" || name == "IS600DoubleBetaProcessor") {
 	  if(name == "DoubleBetaProcessor")
             vecProcess.push_back(new DoubleBetaProcessor());
-	  if(name == "IS600DoubleBetaProcessor")
-            vecProcess.push_back(new IS600DoubleBetaProcessor());
-        }
+        } else if (name == "Labr3TestProcessor") 
+	  vecProcess.push_back(new Labr3TestProcessor());
 #ifdef useroot
         else if (name == "RootProcessor") {
             vecProcess.push_back(new RootProcessor("tree.root", "tree"));

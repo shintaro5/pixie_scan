@@ -101,6 +101,8 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     const unsigned int maxPos = (unsigned int)trace.GetValue("maxpos");
     const vector<double> waveform = trace.GetWaveform();
 
+    cout << "In fitting " << detType << " " << waveform.size() << endl;
+
     if(waveform.size() == 0) {
         EndAnalyze();
         return;
@@ -133,12 +135,17 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
             pars = globals->singleBetaPars();
         else if(detSubtype == "double")
             pars = globals->doubleBetaPars();
+    } else if (detType =="labr3") {
+      if(detSubtype == "r6231-100")
+	pars = globals->labr3_r6231_100Pars();
+      if(detSubtype == "r7724-100")
+	pars = globals->labr3_r7724_100Pars();
     } else if(detType == "tvandle")
-        pars = globals->tvandlePars();
+      pars = globals->tvandlePars();
     else if(detType == "pulser")
-        pars = globals->pulserPars();
+      pars = globals->pulserPars();
     else
-        pars = globals->smallVandlePars();
+      pars = globals->smallVandlePars();
 
     const gsl_multifit_fdfsolver_type *T = gsl_multifit_fdfsolver_lmsder;
     gsl_multifit_fdfsolver *s;

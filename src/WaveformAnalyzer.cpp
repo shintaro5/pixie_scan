@@ -27,6 +27,7 @@ WaveformAnalyzer::WaveformAnalyzer() : TraceAnalyzer() {
     knownTypes_.push_back("liquid");
     knownTypes_.push_back("tvandle");
     knownTypes_.push_back("pulser");
+    knownTypes_.push_back("labr3");
 }
 
 void WaveformAnalyzer::Analyze(Trace &trace,
