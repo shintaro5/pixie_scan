@@ -136,14 +136,16 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     } else if(detType == "tvandle")
         pars = globals->tvandlePars();
     else if (detType =="labr3") {
-      if(detSubtype == "r6231-100")
+      if(detSubtype == "r6231_100")
         pars = globals->labr3_r6231_100Pars();
-      if(detSubtype == "r7724-100")
+      if(detSubtype == "r7724_100")
         pars = globals->labr3_r7724_100Pars();
     } else if(detType == "pulser")
         pars = globals->pulserPars();
     else
         pars = globals->smallVandlePars();
+
+    cout << detType << " : " << detSubtype << " " << pars.first << " " << pars.second << endl;
 
     const gsl_multifit_fdfsolver_type *T = gsl_multifit_fdfsolver_lmsder;
     gsl_multifit_fdfsolver *s;

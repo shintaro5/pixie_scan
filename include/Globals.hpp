@@ -215,9 +215,9 @@ public:
     /** \return the Liquid Scintillator fitting paramters */
     std::pair<double,double> liquidScintPars() {return(liquidScintPars_);}
     /** \return the LaBr3 r6231-100 fitting parameters */
-    std::pair<double,double> labr3_r6231_100Pars() {return(tvandlePars_);}
+    std::pair<double,double> labr3_r6231_100Pars() {return(labr3_r6231_100Pars_);}
     /** \return the LaBr3 r7724-100 fitting parameters */
-    std::pair<double,double> labr3_r7724_100Pars() {return(tvandlePars_);}
+    std::pair<double,double> labr3_r7724_100Pars() {return(labr3_r7724_100Pars_);}
     /*! \return Joined path to the passed filename by adding the configPath_
      * This is temporary solution as long as there are some files not
      * incorporated into Config.xml
@@ -283,7 +283,7 @@ private:
     std::pair<double,double> singleBetaPars_;//!< Single Beta parameters for fitting
     std::pair<double,double> doubleBetaPars_;//!< Double Beta parameters for fitting
     std::pair<double,double> pulserPars_;//!< Pulser parameters for fitting
-    std::pair<double,double> tvandlePars_;//!< Teeny-VANDEL parameters for fitting.
+    std::pair<double,double> tvandlePars_;//!< Teeny-VANDLE parameters for fitting.
     std::pair<double,double> liquidScintPars_;//!< liquid scint pars for fitting
     std::pair<double,double> labr3_r6231_100Pars_; //!< Parameters for the r6231_100 LaBr3 PMT
     std::pair<double,double> labr3_r7724_100Pars_; //!< Parameters for the r7724_100 LaBr3 PMT

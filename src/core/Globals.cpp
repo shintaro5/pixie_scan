@@ -233,15 +233,15 @@ Globals::Globals() {
                 liquidScintPars_.second =
                     it->child("Gamma").attribute("value").as_double();
             }else if (std::string(it->name()).compare("LaBr3") == 0) {
-                labr3_r6231_100Pars_.first =
-                    it->child("r6231_100").child("Beta").attribute("value").as_double(0);
+		labr3_r6231_100Pars_.first =
+                    it->child("r6231_100").child("Beta").attribute("value").as_double();
                 labr3_r6231_100Pars_.second =
-                    it->child("r6231_100").child("Gamma").attribute("value").as_double(0);
+                    it->child("r6231_100").child("Gamma").attribute("value").as_double();
                 labr3_r7724_100Pars_.first =
-                    it->child("r7724_100").child("Beta").attribute("value").as_double(0);
+                    it->child("r7724_100").child("Beta").attribute("value").as_double();
                 labr3_r7724_100Pars_.second =
-                    it->child("r7724_100").child("Gamma").attribute("value").as_double(0);
-            }else
+                    it->child("r7724_100").child("Gamma").attribute("value").as_double();
+	    }else
                 WarnOfUnknownParameter(m, it);
         }
 
