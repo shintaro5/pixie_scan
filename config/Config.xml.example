@@ -51,7 +51,7 @@
     <!-- Sets a rejection region for the data. The time is in seconds and the
             program will skip any buffers that arrive between these times -->
     <Reject>
-        <Time start="300" stop="16000"/>
+        <Time start="300" end="16000"/>
     </Reject>
 
     <!-- Instructions:
@@ -297,8 +297,14 @@
         </Physical>
 
         <Trace>
-            <WaveformLow unit="sample" value="5.0"/>
-            <WaveformHigh unit="sample" value="10.0"/>
+            <WaveformRange>
+                <Low unit="sample" value="5"/>
+                <High unit="sample" value="10"/>
+            </WaveformRange>
+            <SiPmtWaveformRange>
+                <Low unit="sample" value="5"/>
+                <High unit="sample" value="5"/>
+            </SiPmtWaveformRange>
             <DiscriminationStart unit="sample" value="3"/>
             <TrapezoidalWalk unit="ns" value="60"/>
             <TraceDelay unit="ns" value="112"/>

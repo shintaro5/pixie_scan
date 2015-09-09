@@ -133,17 +133,17 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
             pars = globals->singleBetaPars();
         else if(detSubtype == "double")
             pars = globals->doubleBetaPars();
-    } else if (detType =="labr3") {
-      if(detSubtype == "r6231-100")
-	pars = globals->labr3_r6231_100Pars();
-      if(detSubtype == "r7724-100")
-	pars = globals->labr3_r7724_100Pars();
     } else if(detType == "tvandle")
-      pars = globals->tvandlePars();
-    else if(detType == "pulser")
-      pars = globals->pulserPars();
+        pars = globals->tvandlePars();
+    else if (detType =="labr3") {
+      if(detSubtype == "r6231-100")
+        pars = globals->labr3_r6231_100Pars();
+      if(detSubtype == "r7724-100")
+        pars = globals->labr3_r7724_100Pars();
+    } else if(detType == "pulser")
+        pars = globals->pulserPars();
     else
-      pars = globals->smallVandlePars();
+        pars = globals->smallVandlePars();
 
     const gsl_multifit_fdfsolver_type *T = gsl_multifit_fdfsolver_lmsder;
     gsl_multifit_fdfsolver *s;
@@ -169,7 +169,7 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     f.n = sizeFit;
     f.params = &data;
 
-    if(!trace.HasValue("sipm")) {
+    if(detType != "beta" && detSubtype != "double") {
         numParams = 2;
         covar = gsl_matrix_alloc (numParams, numParams);
         xInit[0] = 0.0; xInit[1]=2.5;
@@ -219,12 +219,11 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     trace.InsertValue("phase", phase+maxPos);
     trace.InsertValue("walk", CalculateWalk(maxVal, detType, detSubtype));
 
-    if(detType == "labr3") {
-	trace.plot(DD_AMP, fitAmp, qdc);
-	trace.plot(D_PHASE, phase*1000+100);
-	trace.plot(D_CHISQPERDOF,
-		   pow(gsl_blas_dnrm2(s->f),2.0)/(sizeFit - numParams));
-    }
+    trace.plot(DD_AMP, fitAmp, qdc);
+    trace.plot(D_PHASE, phase*1000+100);
+    trace.plot(D_CHISQPERDOF,
+               pow(gsl_blas_dnrm2(s->f),2.0)/(sizeFit - numParams));
+
     gsl_multifit_fdfsolver_free (s);
     gsl_matrix_free (covar);
     EndAnalyze();
