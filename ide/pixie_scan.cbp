@@ -4,7 +4,7 @@
 	<Project>
 		<Option title="pixie_scan" />
 		<Option makefile_is_custom="1" />
-		<Option execution_dir="/home/svpaulauskas/programs/sources/pixie_scan" />
+		<Option execution_dir="../../pixie_scan" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -14,26 +14,30 @@
 				<Option object_output="../obj" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="test00 &lt; ../scripts/qrun.bash" />
+				<Option parameters="test00 &lt; ../scripts/test.cmd" />
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="include" />
 				</Compiler>
 				<MakeCommands>
-					<Build command="$make -j15" />
+					<Build command="$make -j3" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -j15 &gt; $(CMD_NULL)" />
+					<SilentBuild command="$make -j2 &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../COPYRIGHT" />
+		<Unit filename="../LICENSE" />
 		<Unit filename="../Makefile" />
 		<Unit filename="../Makefile.objs" />
+		<Unit filename="../README.md" />
+		<Unit filename="../TODO" />
 		<Unit filename="../config/Config.xml.cal" />
 		<Unit filename="../config/Config.xml.example" />
 		<Unit filename="../config/anl/2013/Globals.xml" />
