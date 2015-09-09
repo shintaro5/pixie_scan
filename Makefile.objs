@@ -10,34 +10,34 @@ SCANORO          = scanor.o
 PUGIXMLO = pugixml.o
 
 #---------- Core ----------
-BARDETECTORO     = BarDetector.o
-BARBUILDERO      = BarBuilder.o
-CALIBRATORO      = Calibrator.o
-CHANEVENTO       = ChanEvent.o
-CORRELATORO      = Correlator.o
-DETECTORDRIVERO  = DetectorDriver.o
-DETECTORLIBRARYO = DetectorLibrary.o
-DETECTORSUMMARYO = DetectorSummary.o
-EVENTPROCESSORO  = EventProcessor.o
-GLOBALSO         = Globals.o
-HIGHRESTIMINGDATAO = HighResTimingData.o
-IDENTIFIERO  = Identifier.o
-INITIALIZEO      = Initialize.o
-MESSENGERO       = Messenger.o
-NOTEBOOKO		 = Notebook.o
-PLACEBUILDERO    = PlaceBuilder.o
-PLACESO          = Places.o
-PLOTSO           = Plots.o
-PLOTSREGISTERO   = PlotsRegister.o
-PIXIEO           = PixieStd.o
-RANDOMPOOLO      = RandomPool.o
-RAWEVENTO        = RawEvent.o
-READBUFFDATADFO    = ReadBuffData.RevD.o
-READBUFFDATAAO    = ReadBuffData.RevA.o
-STATSDATAO       = StatsData.o
-TIMINGCALO		 = TimingCalibrator.o
-TIMINGMAPBUILDERO = TimingMapBuilder.o
-TREECORRELATORO  = TreeCorrelator.o
+BARDETECTORO        = BarDetector.o
+BARBUILDERO         = BarBuilder.o
+CALIBRATORO         = Calibrator.o
+CHANEVENTO          = ChanEvent.o
+CORRELATORO         = Correlator.o
+DETECTORDRIVERO     = DetectorDriver.o
+DETECTORLIBRARYO    = DetectorLibrary.o
+DETECTORSUMMARYO    = DetectorSummary.o
+EVENTPROCESSORO     = EventProcessor.o
+GLOBALSO            = Globals.o
+HIGHRESTIMINGDATAO  = HighResTimingData.o
+IDENTIFIERO         = Identifier.o
+INITIALIZEO         = Initialize.o
+MESSENGERO          = Messenger.o
+NOTEBOOKO	    = Notebook.o
+PLACEBUILDERO       = PlaceBuilder.o
+PLACESO             = Places.o
+PLOTSO              = Plots.o
+PLOTSREGISTERO      = PlotsRegister.o
+PIXIEO              = PixieStd.o
+RANDOMPOOLO         = RandomPool.o
+RAWEVENTO           = RawEvent.o
+READBUFFDATADFO     = ReadBuffData.RevD.o
+READBUFFDATAAO      = ReadBuffData.RevA.o
+STATSDATAO          = StatsData.o
+TIMINGCALO          = TimingCalibrator.o
+TIMINGMAPBUILDERO   = TimingMapBuilder.o
+TREECORRELATORO     = TreeCorrelator.o
 
 #---------- Analyzers ----------
 CFDANALYZERO     = CfdAnalyzer.o
@@ -108,3 +108,7 @@ CXX_OBJS += $(BEAMLOGICPROCESSORO) $(BETASCINTPROCESSORO)\
 	$(NEUTRONSCINTPROCESSORO) $(POSITIONPROCESSORO) $(PULSERPROCESSORO)\
 	$(SSDPROCESSORO) $(TEENYVANDLEPROCESSORO) $(TRIGGERLOGICPROCESSORO)\
 	$(VANDLEPROCESSORO)
+
+LABR3TESTPROCESSORO = LaBr3TestProcessor.o
+CXX_OBJS += $(LABR3TESTPROCESSORO)
+

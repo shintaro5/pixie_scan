@@ -44,7 +44,7 @@
 #include "VandleProcessor.hpp"
 #include "ValidProcessor.hpp"
 
-#include "Labr3TestProcessor.hpp"
+#include "LaBr3TestProcessor.hpp"
 
 #include "CfdAnalyzer.hpp"
 #include "DoubleTraceAnalyzer.hpp"

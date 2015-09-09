@@ -1,4 +1,4 @@
-/** \file Labr3TestProcessor.cpp
+/** \file LaBr3TestProcessor.cpp
  *\brief A Labr3Test processor class that can be used to build your own.
  *\author S. V. Paulauskas
  *\date October 26, 2014
@@ -7,7 +7,7 @@
 #include "Globals.hpp"
 #include "HighResTimingData.hpp"
 #include "RawEvent.hpp"
-#include "Labr3TestProcessor.hpp"
+#include "LaBr3TestProcessor.hpp"
 
 namespace dammIds {
     namespace labr3test {
