@@ -47,7 +47,6 @@ void WaveformAnalyzer::Analyze(Trace &trace,
         range = globals->siPmtWaveformRange();
     if(detType == "labr3")
       range = globals->labr3WaveformRange();
-    cout << detType << " " << range.first << " " << range.second << endl;
     unsigned int startDiscrimination = globals->discriminationStart();
     unsigned int maxPos = trace.FindMaxInfo(range.first, range.second);
 

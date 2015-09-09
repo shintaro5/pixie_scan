@@ -101,8 +101,6 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     const unsigned int maxPos = (unsigned int)trace.GetValue("maxpos");
     const vector<double> waveform = trace.GetWaveform();
 
-    cout << "In fitting " << detType << " " << waveform.size() << endl;
-
     if(waveform.size() == 0) {
         EndAnalyze();
         return;
@@ -221,11 +219,12 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     trace.InsertValue("phase", phase+maxPos);
     trace.InsertValue("walk", CalculateWalk(maxVal, detType, detSubtype));
 
-    trace.plot(DD_AMP, fitAmp, maxVal);
-    trace.plot(D_PHASE, phase*1000+100);
-    trace.plot(D_CHISQPERDOF,
-               pow(gsl_blas_dnrm2(s->f),2.0)/(sizeFit - numParams));
-
+    if(detType == "labr3") {
+	trace.plot(DD_AMP, fitAmp, qdc);
+	trace.plot(D_PHASE, phase*1000+100);
+	trace.plot(D_CHISQPERDOF,
+		   pow(gsl_blas_dnrm2(s->f),2.0)/(sizeFit - numParams));
+    }
     gsl_multifit_fdfsolver_free (s);
     gsl_matrix_free (covar);
     EndAnalyze();
