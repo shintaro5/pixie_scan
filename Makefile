@@ -5,7 +5,7 @@ SHELL=/bin/sh
 # Uncomment the following line for root functionality
 # USEROOT = 1
 # Uncomment this line for a more verbose scan
-# CXXFLAGS += -DVERBOSE
+ CXXFLAGS += -DVERBOSE
 # Undefine to make a "online" version
 # ONLINE = 1
 # Define to see debugging information for TreeCorrelator
