@@ -145,8 +145,6 @@ void FittingAnalyzer::Analyze(Trace &trace, const std::string &detType,
     else
         pars = globals->smallVandlePars();
 
-    cout << detType << " : " << detSubtype << " " << pars.first << " " << pars.second << endl;
-
     const gsl_multifit_fdfsolver_type *T = gsl_multifit_fdfsolver_lmsder;
     gsl_multifit_fdfsolver *s;
     gsl_matrix *covar;

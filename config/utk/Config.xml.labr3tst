@@ -19,7 +19,7 @@
     </Global>
 
     <DetectorDriver>
-        <Analyzer name="TraceExtractor" type="labr3" subtype="r6231_100"/>
+        <Analyzer name="TraceExtractor" type="tvandle" subtype="single"/>
         <Analyzer name="WaveformAnalyzer"/>
         <Analyzer name="FittingAnalyzer"/>
         <Processor name="Labr3TestProcessor"/>
@@ -58,8 +58,8 @@
         </Physical>
         <Trace>
             <WaveformRange>
-                <Low unit="sample" value="5"/>
-                <High unit="sample" value="10"/>
+                <Low unit="sample" value="10"/>
+                <High unit="sample" value="15"/>
             </WaveformRange>
             <SiPmtWaveformRange>
                 <Low unit="sample" value="5"/>
@@ -93,8 +93,8 @@
                     <Gamma value="0.212945"/>
                 </Big>
                 <TeenyVandle>
-                    <Beta value="0.362307"/>
-                    <Gamma value="0.186129"/>
+                    <Beta value="0.161748"/>
+                    <Gamma value="0.103381"/>
                 </TeenyVandle>
             </Vandle>
             <LaBr3>

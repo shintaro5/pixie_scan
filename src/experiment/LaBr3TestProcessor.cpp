@@ -58,9 +58,9 @@ bool Labr3TestProcessor::Process(RawEvent &event) {
     static const vector<ChanEvent*> & tvandleEvents =
         event.GetSummary("tvandle")->GetList();
 
-    double timeRes  = 2; //20 ps/bin
+    double timeRes  = 50; //20 ps/bin
     double timeOff  = 2000.;
-    double phaseX   = -2000.;
+    double phaseX   = -18000.;
 
     for(vector<ChanEvent*>::const_iterator it = labr3Events.begin();
          it != labr3Events.end(); it++) {
@@ -72,9 +72,9 @@ bool Labr3TestProcessor::Process(RawEvent &event) {
 	    HighResTimingData tvandle((*itA));
 
 	    if(tvandle.GetIsValidData() && labr3.GetIsValidData()) {
-		//cout << (labr3.GetHighResTime() - tvandle.GetHighResTime())*
-		    // timeRes+timeOff << " " << labr3.GetPhase()*timeRes << " " << 
-		    // tvandle.GetPhase()*timeRes << endl;
+		// cout << (labr3.GetHighResTime() - tvandle.GetHighResTime())*
+		//     timeRes+timeOff << " " << labr3.GetPhase()*timeRes << " " << 
+		//     tvandle.GetPhase()*timeRes << endl;
 		
 		plot(D_TDIFF, (labr3.GetHighResTime() - tvandle.GetHighResTime())*
 		     timeRes+timeOff);
