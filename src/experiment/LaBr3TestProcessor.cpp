@@ -15,6 +15,7 @@ namespace dammIds {
       const int RANGE =9;
         const int D_TDIFF  = 0; //!< ID for the energy of the template detector
         const int DD_PP = 1; //!< Energy Labr3Test vs. Energy Pulser
+        const int DD_AMPMAP = 2; //!< Energy vs. Sample Number
     }
 }//namespace dammIds
 
@@ -29,8 +30,9 @@ Labr3TestProcessor::Labr3TestProcessor():
 
 void Labr3TestProcessor::DeclarePlots(void) {
     DeclareHistogram1D(D_TDIFF, SE, "Time Difference");
-    DeclareHistogram2D(DD_PP, SE, SE,
-                       "Phase - Phase");
+    DeclareHistogram2D(DD_PP, SE, SE,"Phase - Phase");
+    DeclareHistogram2D(DD_AMPMAP, SE, SE, "AmplitudeMap");
+    DeclareHistogram1D(D_ENERGY, SE, "Energy");
 }
 
 bool Labr3TestProcessor::PreProcess(RawEvent &event) {
@@ -43,9 +45,9 @@ bool Labr3TestProcessor::PreProcess(RawEvent &event) {
     for(vector<ChanEvent*>::const_iterator it = labr3Events.begin();
         it != labr3Events.end(); it++) {
         unsigned int location = (*it)->GetChanID().GetLocation();
-        // if(location == 0)
-        //     plot(D_ENERGY, (*it)->GetEnergy());
-    }
+	// if(location == 0)
+	//     plot(D_ENERGY, (*it)->GetEnergy());
+    }    
     return(true);
 }
 
@@ -66,20 +68,25 @@ bool Labr3TestProcessor::Process(RawEvent &event) {
          it != labr3Events.end(); it++) {
 	HighResTimingData labr3((*it));
 	
+	if(labr3.GetIsValidData())
+	    for(Trace::const_iterator it = labr3.GetTrace()->begin();
+		it != labr3.GetTrace()->end(); it++)
+		plot(DD_AMPMAP, int(it-labr3.GetTrace()->begin()), *it);
+	
 	for(vector<ChanEvent*>::const_iterator itA = tvandleEvents.begin();
 	    itA != tvandleEvents.end(); itA++) {
 
 	    HighResTimingData tvandle((*itA));
 
 	    if(tvandle.GetIsValidData() && labr3.GetIsValidData()) {
-		 // cout << (labr3.GetHighResTime() - tvandle.GetHighResTime())*
-		 //     timeRes+timeOff << " " << labr3.GetPhase()*timeRes << " " << 
-		 //     tvandle.GetPhase()*timeRes+phaseX << endl;
+		cout << (labr3.GetHighResTime() - tvandle.GetHighResTime())*
+		    timeRes+timeOff << " " << labr3.GetPhase()*timeRes << " " << 
+		    tvandle.GetPhase()*timeRes+phaseX << endl;
 		
 		plot(D_TDIFF, (labr3.GetHighResTime() - tvandle.GetHighResTime())*
 		     timeRes+timeOff);
-		plot(DD_PP, labr3.GetPhase()*timeRes-phaseX, 
-		     tvandle.GetPhase()*timeRes-phaseX);
+		plot(DD_PP, labr3.GetPhase()*timeRes+phaseX, 
+		     tvandle.GetPhase()*timeRes+phaseX);
 	    }
 	}
     }
