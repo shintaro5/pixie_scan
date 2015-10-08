@@ -30,7 +30,7 @@
             <Channel number="0" type="labr3" subtype="r6231_100"></Channel>
             <Channel number="1" type="tvandle" subtype="single"></Channel>
         </Module>
-        <Module number="1">
+        <Module number="2">
             <Channel number="0" type="ignore" subtype="ignore"></Channel>
         </Module>
     </Map>
