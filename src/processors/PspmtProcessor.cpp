@@ -115,9 +115,9 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     
     data_.Clear();
     
-    double q1=0,q2=0,q3=0,q4=0,qd=0;
-    double qdc1=0,qdc2=0,qdc3=0,qdc4=0,qdcd=0;
-    double tre1=0,tre2=0,tre3=0,tre4=0,tred=0;
+    double che1=0,che2=0,che3=0,che4=0,che5=0;
+    double tre1=0,tre2=0,tre3=0,tre4=0,tre5=0;
+    double qdc1=0,qdc2=0,qdc3=0,qdc4=0,qdc5=0;
     
     double qright=0,qleft=0,qtop=0,qbottom=0,qsum=0;
     double xright=0,xleft=0,ytop=0,ybottom=0;
@@ -132,14 +132,34 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         int    ch         = chan->GetChanID().GetLocation();
         double calEnergy  = chan->GetCalEnergy();
         double pspmtTime  = chan->GetTime();
-        Trace trace       = chan->GetTrace();
         
-        double trace_energy;
+	// variables for trace stuff
+	Trace trace       = chan->GetTrace();
+	double trace_energy;
         double trace_time;
         double baseline;
         double qdc;
         
-        if(trace.HasValue("filterEnergy")){
+	if(ch==0){
+	  che1= calEnergy;
+	  plot(D_RAW1,che1);
+        }else if(ch==1){
+	  che2= calEnergy;
+	  plot(D_RAW2,che2);
+        }else if(ch==2){
+	  che3= calEnergy;
+	  plot(D_RAW3,che3);
+        }else if(ch==3){
+	  che4= calEnergy;
+	  plot(D_RAW4,che4);
+        }else if(ch==4){
+	  che5= calEnergy;
+	  plot(D_RAWD,che5);
+        }
+     
+
+	if(true){
+        //if(trace.HasValue("filterEnergy")){
             traceNum++;   	  
             trace_time    = trace.GetValue("filterTime");
             trace_energy  = trace.GetValue("filterEnergy");
@@ -147,57 +167,40 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
             qdc             = trace.DoQDC(5,128);
             
             if(ch==0){
-                qdc1 = qdc;
-                tre1 = trace_energy;
-                plot(D_QDC_TRACE1,qdc1);
-                plot(D_ENERGY_TRACE1,tre1);
+	      qdc1 = qdc;
+	      tre1 = trace_energy;
+	      plot(D_ENERGY_TRACE1,tre1);
+	      plot(D_QDC_TRACE1,qdc1);
             }else if(ch==1){
-                qdc2 = qdc;
-                tre2 = trace_energy; 
-                plot(D_QDC_TRACE2,qdc2);
-                plot(D_ENERGY_TRACE2,tre2);
+	      qdc2 = qdc;
+	      tre2 = trace_energy; 
+	      plot(D_ENERGY_TRACE2,tre2);
+	      plot(D_QDC_TRACE2,qdc2);
             }else if(ch==2){
-                qdc3 = qdc;
-                tre3 = trace_energy; 
-                plot(D_QDC_TRACE3,qdc3);
-                plot(D_ENERGY_TRACE3,tre3);
-            }else if(ch==3){
-                qdc4 = qdc;
-                tre4 = trace_energy; 	  
-                plot(D_QDC_TRACE4,qdc4);
-                plot(D_ENERGY_TRACE4,tre4);
-            }else if(ch==4){
-                qdcd = qdc;
-                tred = trace_energy; 
-                plot(D_QDC_TRACED,qdcd);
-                plot(D_ENERGY_TRACED,tred);
-            }
-        }
-
-        if(ch==0){
-            q1= calEnergy;
-            plot(D_RAW1,q1);
-        }else if(ch==1){
-            q2= calEnergy;
-            plot(D_RAW2,q2);
-        }else if(ch==2){
-            q3= calEnergy;
-            plot(D_RAW3,q3);
-        }else if(ch==3){
-            q4= calEnergy;
-            plot(D_RAW4,q4);
-        }else if(ch==4){
-            qd= calEnergy;
-            plot(D_RAWD,qd);
+	      qdc3 = qdc;
+	      tre3 = trace_energy; 
+	      plot(D_ENERGY_TRACE3,tre3);
+	      plot(D_QDC_TRACE3,qdc3);
+	    }else if(ch==3){
+	      qdc4 = qdc;
+	      tre4 = trace_energy; 	  
+	      plot(D_ENERGY_TRACE4,tre4);
+	      plot(D_QDC_TRACE4,qdc4);
+	    }else if(ch==4){
+	      qdc5 = qdc;
+	      tre5 = trace_energy; 
+	      plot(D_ENERGY_TRACED,tre5);
+	      plot(D_QDC_TRACED,qdc5);
+	    }
         }
         
-        if(q1>0 && q2>0 && q3>0 && q4>0){
-            qtop    = (q1+q2)/2;
-            qleft   = (q2+q3)/2;
-            qbottom = (q3+q4)/2;
-            qright  = (q4+q1)/2;
+        if(che1>0 && che2>0 && che3>0 && che4>0){
+            qtop    = (che1+che2)/2;
+            qleft   = (che2+che3)/2;
+            qbottom = (che3+che4)/2;
+            qright  = (che4+che1)/2;
             
-            qsum    = (q1+q2+q3+q4)/2;
+            qsum    = (che1+che2+che3+che4)/2;
             xright  = (qright/qsum)*512+100;
             xleft   = (qleft/qsum)*512+100;
             ytop    = (qtop/qsum)*512+100;
