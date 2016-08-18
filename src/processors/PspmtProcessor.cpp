@@ -49,15 +49,8 @@ namespace dammIds{
         
         const int DD_ESLEW=30;
         
-        const int D_TEMP0=80;
-        const int D_TEMP1=81;
-        const int D_TEMP2=82;
-        const int D_TEMP3=83;
-        const int D_TEMP4=84;
-        const int D_TEMP5=85;
         
-        const int DD_DOUBLE_TRACE=77;
-        const int DD_SINGLE_TRACE=78;
+        const int DD_SINGLE_TRACE=77;
     }
 }
 
@@ -69,13 +62,14 @@ PspmtProcessor::PspmtProcessor(void) : EventProcessor(OFFSET, RANGE, "pspmt") {
 }
 
 void PspmtProcessor::DeclarePlots(void) {
-    const int posBins      = 32; 
-    const int energyBins   = 8192;
-    const int traceBins    = 128;
-    const int traceBins2   = 512;
-    const int Bins         = 2500;
-    
-    // Raw 700-707
+ 
+  const int posBins      = 32; 
+  const int energyBins   = 8192;
+  const int traceBins    = 128;
+  const int traceBins2   = 512;
+  const int Bins         = 2500;
+  
+    //offset 1900
     DeclareHistogram1D(D_RAW1, energyBins, "Pspmt1 Raw");
     DeclareHistogram1D(D_RAW2, energyBins, "Pspmt2 Raw");
     DeclareHistogram1D(D_RAW3, energyBins, "Pspmt3 Raw");
@@ -87,7 +81,7 @@ void PspmtProcessor::DeclarePlots(void) {
     DeclareHistogram2D(DD_POS1, posBins, posBins, "Pspmt Pos1");
     DeclareHistogram2D(DD_POS2, posBins, posBins, "Pspmt Pos2");
     
-    // From QDC and traces 
+    // Trace energies 
     // 710-
     DeclareHistogram1D(D_ENERGY_TRACE1, energyBins, "Energy1 from trace");
     DeclareHistogram1D(D_ENERGY_TRACE2, energyBins, "Energy2 from trace");
@@ -100,29 +94,16 @@ void PspmtProcessor::DeclarePlots(void) {
     DeclareHistogram2D(DD_POS1_TRACE, posBins, posBins, "Pspmt pos by Trace1");
     DeclareHistogram2D(DD_POS2_TRACE, posBins, posBins, "Pspmt pos by Trace2");
     
-    
-    // 720- QDC
+    // QDCs
     DeclareHistogram1D(D_QDC_TRACE1, energyBins, "Energy1 from QDC");
     DeclareHistogram1D(D_QDC_TRACE2, energyBins, "Energy2 from QDC");
     DeclareHistogram1D(D_QDC_TRACE3, energyBins, "Energy3 from QDC");
     DeclareHistogram1D(D_QDC_TRACE4, energyBins, "Energy4 from QDC");
     DeclareHistogram1D(D_QDC_TRACED, energyBins, "EnergyD from QDC");
     
-    // Simple Correlations
-    // DeclareHistogram2D(DD_ESLEW_X, energyBins, posBins,"X Map with slew");
-    //DeclareHistogram2D(DD_ESLEW_Y, energyBins, posBins,"Y Map with slew");
-    
     // Trace
-    DeclareHistogram2D(DD_DOUBLE_TRACE, traceBins, traceBins2,"Double traces");
     DeclareHistogram2D(DD_SINGLE_TRACE, traceBins, traceBins2,"Single trace");
     
-    // For R&D
-    // DeclareHistogram2D(DD_TEMP0, Bins, Bins, "Sum gated position1");
-    DeclareHistogram1D(D_TEMP1, energyBins, "Pspmt1 Pgate");
-    DeclareHistogram1D(D_TEMP2, energyBins, "Pspmt2 Pgate");
-    DeclareHistogram1D(D_TEMP3, energyBins, "Pspmt3 Pgate");
-    DeclareHistogram1D(D_TEMP4, energyBins, "Pspmt4 Pgate");
-    DeclareHistogram1D(D_TEMP5, energyBins, "Dynode Pgate");
 }
 
 
@@ -141,23 +122,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     double qright=0,qleft=0,qtop=0,qbottom=0,qsum=0;
     double xright=0,xleft=0,ytop=0,ybottom=0;
     
-    double qtre_r=0,qtre_l=0,qtre_t=0,qtre_b=0,qtre_s=0;
-    double xtre_r=0,xtre_l=0,ytre_t=0,ytre_b=0;
-    
-    double qqdc_r=0,qqdc_l=0,qqdc_t=0,qqdc_b=0,qqdc_s=0;
-    double xqdc_r=0,xqdc_l=0,yqdc_t=0,yqdc_b=0;
-    
-    double pxright=0,pxleft=0,pytop=0,pybottom=0;
-    double pxtre_r=0,pxtre_l=0,pytre_t=0,pytre_b=0;
-    
-    // tentatively local params //
-    double threshold=260;
-    double slope=0.0606;
-    double intercept=10.13;
-    //////////////////////////////
     static int traceNum;
-    
-    double f=0.1;
     
     for (vector<ChanEvent*>::const_iterator it = pspmtEvents.begin();
          it != pspmtEvents.end(); it++) {
@@ -173,7 +138,6 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         double trace_time;
         double baseline;
         double qdc;
-        int    num        = trace.GetValue("numPulses");
         
         if(trace.HasValue("filterEnergy")){
             traceNum++;   	  
@@ -238,66 +202,14 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
             xleft   = (qleft/qsum)*512+100;
             ytop    = (qtop/qsum)*512+100;
             ybottom = (qbottom/qsum)*512+100;
-            plot(D_SUM,qsum);
+         
         }
         
-        if(tre1>0 && tre2>0 && tre3>0 && tre4>0 ){
-            qtre_t=(tre1+tre2)/2;
-            qtre_l=(tre2+tre3)/2;
-            qtre_b=(tre3+tre4)/2;
-            qtre_r=(tre4+tre1)/2;
-            qtre_s=(tre1+tre2+tre3+tre4)/2;
-            
-            xtre_r=(qtre_r/qtre_s)*512+100;
-            xtre_l=(qtre_l/qtre_s)*512+100;
-            ytre_t=(qtre_t/qtre_s)*512+100;
-            ytre_b=(qtre_b/qtre_s)*512+100;
-            
-            pxtre_r = trunc(slope*xtre_l-intercept);
-            pxtre_l = trunc(slope*xtre_r-intercept);
-            pytre_t = trunc(slope*ytre_t-intercept);
-            pytre_b = trunc(slope*ytre_b-intercept);
-                        
-            plot(D_ENERGY_TRACESUM,qtre_s);
-            
-            if(tre1>threshold && tre2>threshold && tre3>threshold && tre4>threshold ){
-                plot(DD_POS1_RAW_TRACE,xtre_r,ytre_t);
-                plot(DD_POS2_RAW_TRACE,xtre_l,ytre_b);
-                plot(DD_POS1_TRACE,pxtre_r,pytre_t);
-                plot(DD_POS2_TRACE,pxtre_l,pytre_b);
-            }    
-        }
         
-        if(qdc1>0 && qdc2>0 && qdc3>0 && qdc4>0 ){
-            qqdc_t=(qdc1+qdc2)/2;
-            qqdc_l=(qdc2+qdc3)/2;
-            qqdc_b=(qdc3+qdc4)/2;
-            qqdc_r=(qdc4+qdc1)/2;
-            qqdc_s=(qqdc_t+qqdc_l+qqdc_b+qqdc_r)/2;
-            
-            xqdc_r=(qqdc_r/qqdc_s)*512+100;
-            xqdc_l=(qqdc_l/qqdc_s)*512+100;
-            yqdc_t=(qqdc_t/qqdc_s)*512+100;
-            yqdc_b=(qqdc_b/qqdc_s)*512+100;
-            
-            plot(D_ENERGY_TRACESUM,qqdc_s);
-        }
-        
-        if(q1>threshold && q2>threshold && q3>threshold && q4>threshold ){
-            pxleft   = trunc(slope*xleft-intercept);
-            pxright  = trunc(slope*xright-intercept);
-            pytop    = trunc(slope*ytop-intercept);
-            pybottom = trunc(slope*ybottom-intercept);
-            
-            plot(DD_POS1_RAW,xright,ytop);
-            plot(DD_POS2_RAW,xleft,ybottom);
-            plot(DD_POS1,pxright,pytop);
-            plot(DD_POS2,pxleft,pybottom);
-                        
-            
-            for(vector<int>::iterator ittr = trace.begin();ittr != trace.end();ittr++)
+   
+	for(vector<int>::iterator ittr = trace.begin();ittr != trace.end();ittr++)
                 plot(DD_SINGLE_TRACE,ittr-trace.begin(),traceNum,*ittr);
-        }
+   
     } // end of channel event
     
     EndProcess();
