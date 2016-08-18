@@ -119,8 +119,8 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     double tre1=0,tre2=0,tre3=0,tre4=0,tre5=0;
     double qdc1=0,qdc2=0,qdc3=0,qdc4=0,qdc5=0;
     
-    double qright=0,qleft=0,qtop=0,qbottom=0,qsum=0;
-    double xright=0,xleft=0,ytop=0,ybottom=0;
+    double xche=0,yche=0;
+    
     
     static int traceNum;
     
@@ -195,17 +195,13 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         }
         
         if(che1>0 && che2>0 && che3>0 && che4>0){
-            qtop    = (che1+che2)/2;
-            qleft   = (che2+che3)/2;
-            qbottom = (che3+che4)/2;
-            qright  = (che4+che1)/2;
-            
-            qsum    = (che1+che2+che3+che4)/2;
-            xright  = (qright/qsum)*512+100;
-            xleft   = (qleft/qsum)*512+100;
-            ytop    = (qtop/qsum)*512+100;
-            ybottom = (qbottom/qsum)*512+100;
-         
+	  
+	  //	  cout << GetPositionX(che1,che2,che3,che4) << " " << GetPositionY(che1,che2,che3,che4) << endl ;
+	  xche=GetPositionX(che1,che2,che3,che4);
+	  yche=GetPositionY(che1,che2,che3,che4);
+	  
+	  plot(DD_POS1_RAW,xche,yche);
+	  
         }
         
         
@@ -226,3 +222,35 @@ bool PspmtProcessor::Process(RawEvent &event){
     EndProcess();
     return(true);
 }
+
+double PspmtProcessor::GetPositionX(double q1,double q2,double q3,double q4){
+  
+  double qright=0,qleft=0,qsum=0;
+  double xright=0,xleft=0;
+  
+  qsum = q1+q2+q3+q4;
+  qright = (q4+q1)/2;
+  qleft  = (q2+q3)/2;
+  
+  xright = (qright/qsum)*512+100;
+  xleft  = (qleft/qsum)*512+100;
+  
+  return xright;
+}
+
+double PspmtProcessor::GetPositionY(double q1,double q2,double q3,double q4){
+  
+  double qtop=0,qbottom=0,qsum=0;
+  double ytop=0,ybottom=0;
+  
+  qsum = q1+q2+q3+q4;
+  qtop = (q1+q2)/2;
+  qbottom  = (q3+q4)/2;
+  
+  ytop     = (qtop/qsum)*512+100;
+  ybottom  = (qbottom/qsum)*512+100;
+  
+  return ytop;
+}
+
+
