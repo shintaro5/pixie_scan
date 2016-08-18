@@ -23,34 +23,27 @@ namespace dammIds{
         const int D_RAW2=1;
         const int D_RAW3=2;
         const int D_RAW4=3;
-        const int D_RAWD=4;
+        const int D_RAW5=4;
         const int D_SUM=5;
-        const int DD_POS1_RAW=6;
-        const int DD_POS2_RAW=7;
-        const int DD_POS1=8;
-        const int DD_POS2=9;
+        const int DD_POS_CHE=6;
         
-        const int D_ENERGY_TRACE1=10;
-        const int D_ENERGY_TRACE2=11;
-        const int D_ENERGY_TRACE3=12;
-        const int D_ENERGY_TRACE4=13;
-        const int D_ENERGY_TRACED=14;
-        const int D_ENERGY_TRACESUM=15;
-        const int DD_POS1_RAW_TRACE=16;
-        const int DD_POS2_RAW_TRACE=17;
-        const int DD_POS1_TRACE=18;
-        const int DD_POS2_TRACE=19;
+        const int D_ENERGY_TRE1=10;
+        const int D_ENERGY_TRE2=11;
+        const int D_ENERGY_TRE3=12;
+        const int D_ENERGY_TRE4=13;
+        const int D_ENERGY_TRE5=14;
+        const int D_ENERGY_TRESUM=15;
+        const int DD_POS_TRE=16;
         
-        const int D_QDC_TRACE1=20;
-        const int D_QDC_TRACE2=21;
-        const int D_QDC_TRACE3=22;
-        const int D_QDC_TRACE4=23;
-        const int D_QDC_TRACED=24;
-        
-        const int DD_ESLEW=30;
-        
-        
-        const int DD_SINGLE_TRACE=77;
+      const int D_QDC1=20;
+      const int D_QDC2=21;
+      const int D_QDC3=22;
+      const int D_QDC4=23;
+      const int D_QDC5=24;
+      const int D_QDCSUM=25;
+      const int DD_POS_QDC=26;
+      
+      const int DD_SINGLE_TRACE=77;
     }
 }
 
@@ -74,33 +67,28 @@ void PspmtProcessor::DeclarePlots(void) {
     DeclareHistogram1D(D_RAW2, energyBins, "Pspmt2 Raw");
     DeclareHistogram1D(D_RAW3, energyBins, "Pspmt3 Raw");
     DeclareHistogram1D(D_RAW4, energyBins, "Pspmt4 Raw");
-    DeclareHistogram1D(D_RAWD, energyBins, "Pspmt Dynode");
+    DeclareHistogram1D(D_RAW5, energyBins, "Pspmt Dynode");
     DeclareHistogram1D(D_SUM,  energyBins, "Pspmt Sum");
-    DeclareHistogram2D(DD_POS1_RAW, Bins, Bins, "Pspmt Pos1 Raw");
-    DeclareHistogram2D(DD_POS2_RAW, Bins, Bins, "Pspmt Pos2 Raw");
-    DeclareHistogram2D(DD_POS1, posBins, posBins, "Pspmt Pos1");
-    DeclareHistogram2D(DD_POS2, posBins, posBins, "Pspmt Pos2");
+    DeclareHistogram2D(DD_POS_CHE, Bins, Bins, "Pspmt Pos1 Raw");
     
-    // Trace energies 
-    // 710-
-    DeclareHistogram1D(D_ENERGY_TRACE1, energyBins, "Energy1 from trace");
-    DeclareHistogram1D(D_ENERGY_TRACE2, energyBins, "Energy2 from trace");
-    DeclareHistogram1D(D_ENERGY_TRACE3, energyBins, "Energy3 from trace");
-    DeclareHistogram1D(D_ENERGY_TRACE4, energyBins, "Energy4 from trace");
-    DeclareHistogram1D(D_ENERGY_TRACED, energyBins, "EnergyD from trace");
-    DeclareHistogram1D(D_ENERGY_TRACESUM,  energyBins, "Pspmt Sum");
-    DeclareHistogram2D(DD_POS1_RAW_TRACE, posBins, posBins, "Pspmt pos Raw by Trace1");
-    DeclareHistogram2D(DD_POS2_RAW_TRACE, posBins, posBins, "Pspmt pos Raw by Trace2");
-    DeclareHistogram2D(DD_POS1_TRACE, posBins, posBins, "Pspmt pos by Trace1");
-    DeclareHistogram2D(DD_POS2_TRACE, posBins, posBins, "Pspmt pos by Trace2");
+ 
+    // 710-Trace energies 
+    DeclareHistogram1D(D_ENERGY_TRE1, energyBins, "Energy1 from trace");
+    DeclareHistogram1D(D_ENERGY_TRE2, energyBins, "Energy2 from trace");
+    DeclareHistogram1D(D_ENERGY_TRE3, energyBins, "Energy3 from trace");
+    DeclareHistogram1D(D_ENERGY_TRE4, energyBins, "Energy4 from trace");
+    DeclareHistogram1D(D_ENERGY_TRE5, energyBins, "Energy5 from trace");
+    DeclareHistogram1D(D_ENERGY_TRESUM,  energyBins, "Pspmt Sum");
+    DeclareHistogram2D(DD_POS_TRE, posBins, posBins, "Pspmt pos Raw by Trace1");
     
-    // QDCs
-    DeclareHistogram1D(D_QDC_TRACE1, energyBins, "Energy1 from QDC");
-    DeclareHistogram1D(D_QDC_TRACE2, energyBins, "Energy2 from QDC");
-    DeclareHistogram1D(D_QDC_TRACE3, energyBins, "Energy3 from QDC");
-    DeclareHistogram1D(D_QDC_TRACE4, energyBins, "Energy4 from QDC");
-    DeclareHistogram1D(D_QDC_TRACED, energyBins, "EnergyD from QDC");
-    
+    // 720- QDCs
+    DeclareHistogram1D(D_QDC1, energyBins, "Energy1 from QDC");
+    DeclareHistogram1D(D_QDC2, energyBins, "Energy2 from QDC");
+    DeclareHistogram1D(D_QDC3, energyBins, "Energy3 from QDC");
+    DeclareHistogram1D(D_QDC4, energyBins, "Energy4 from QDC");
+    DeclareHistogram1D(D_QDC5, energyBins, "Energy5 from QDC");
+    DeclareHistogram2D(DD_POS_QDC, posBins, posBins, "Pspmt pos Raw by QDC");
+
     // Trace
     DeclareHistogram2D(DD_SINGLE_TRACE, traceBins, traceBins2,"Single trace");
     
@@ -120,7 +108,8 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     double qdc1=0,qdc2=0,qdc3=0,qdc4=0,qdc5=0;
     
     double xche=0,yche=0;
-    
+    double xtre=0,ytre=0;
+    double xqdc=0,yqdc=0;
     
     static int traceNum;
     
@@ -154,7 +143,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	  plot(D_RAW4,che4);
         }else if(ch==4){
 	  che5= calEnergy;
-	  plot(D_RAWD,che5);
+	  plot(D_RAW5,che5);
         }
      
 
@@ -169,38 +158,43 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
             if(ch==0){
 	      qdc1 = qdc;
 	      tre1 = trace_energy;
-	      plot(D_ENERGY_TRACE1,tre1);
-	      plot(D_QDC_TRACE1,qdc1);
+	      plot(D_ENERGY_TRE1,tre1);
+	      plot(D_QDC1,qdc1);
             }else if(ch==1){
 	      qdc2 = qdc;
 	      tre2 = trace_energy; 
-	      plot(D_ENERGY_TRACE2,tre2);
-	      plot(D_QDC_TRACE2,qdc2);
+	      plot(D_ENERGY_TRE2,tre2);
+	      plot(D_QDC2,qdc2);
             }else if(ch==2){
 	      qdc3 = qdc;
 	      tre3 = trace_energy; 
-	      plot(D_ENERGY_TRACE3,tre3);
-	      plot(D_QDC_TRACE3,qdc3);
+	      plot(D_ENERGY_TRE3,tre3);
+	      plot(D_QDC3,qdc3);
 	    }else if(ch==3){
 	      qdc4 = qdc;
 	      tre4 = trace_energy; 	  
-	      plot(D_ENERGY_TRACE4,tre4);
-	      plot(D_QDC_TRACE4,qdc4);
+	      plot(D_ENERGY_TRE4,tre4);
+	      plot(D_QDC4,qdc4);
 	    }else if(ch==4){
 	      qdc5 = qdc;
 	      tre5 = trace_energy; 
-	      plot(D_ENERGY_TRACED,tre5);
-	      plot(D_QDC_TRACED,qdc5);
+	      plot(D_ENERGY_TRE5,tre5);
+	      plot(D_QDC5,qdc5);
 	    }
         }
         
         if(che1>0 && che2>0 && che3>0 && che4>0){
 	  
-	  //	  cout << GetPositionX(che1,che2,che3,che4) << " " << GetPositionY(che1,che2,che3,che4) << endl ;
 	  xche=GetPositionX(che1,che2,che3,che4);
 	  yche=GetPositionY(che1,che2,che3,che4);
+	  xtre=GetPositionX(tre1,tre2,tre3,tre4);
+	  ytre=GetPositionY(tre1,tre2,tre3,tre4);
+	  xqdc=GetPositionX(qdc1,qdc2,qdc3,qdc4);
+	  yqdc=GetPositionY(qdc1,qdc2,qdc3,qdc4);
 	  
-	  plot(DD_POS1_RAW,xche,yche);
+	  plot(DD_POS_CHE,xche,yche);
+	  plot(DD_POS_TRE,xtre,ytre);
+	  plot(DD_POS_QDC,xqdc,yqdc);
 	  
         }
         
