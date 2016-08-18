@@ -294,13 +294,6 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
             plot(DD_POS1,pxright,pytop);
             plot(DD_POS2,pxleft,pybottom);
                         
-            if(xright>341 && xright < 356 && ytop>200 && ytop<211){
-                plot(D_TEMP0,f*q1);
-                plot(D_TEMP1,f*q2);
-                plot(D_TEMP2,f*q3);
-                plot(D_TEMP3,f*q4);
-                plot(D_TEMP4,f*qd);
-            }
             
             for(vector<int>::iterator ittr = trace.begin();ittr != trace.end();ittr++)
                 plot(DD_SINGLE_TRACE,ittr-trace.begin(),traceNum,*ittr);
