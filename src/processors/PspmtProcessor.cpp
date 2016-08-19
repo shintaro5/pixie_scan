@@ -18,23 +18,23 @@ using namespace dammIds::pspmt;
 namespace dammIds{
     namespace pspmt{
         
-        // OFFSET = 700//    
-        const int D_RAW1=0;
-        const int D_RAW2=1;
-        const int D_RAW3=2;
-        const int D_RAW4=3;
-        const int D_RAW5=4;
-        const int D_SUM=5;
-        const int DD_POS_CHE=6;
-        
-        const int D_ENERGY_TRE1=10;
-        const int D_ENERGY_TRE2=11;
-        const int D_ENERGY_TRE3=12;
-        const int D_ENERGY_TRE4=13;
-        const int D_ENERGY_TRE5=14;
-        const int D_ENERGY_TRESUM=15;
-        const int DD_POS_TRE=16;
-        
+      // OFFSET = 1900//    
+      const int D_RAW1=0;
+      const int D_RAW2=1;
+      const int D_RAW3=2;
+      const int D_RAW4=3;
+      const int D_RAW5=4;
+      const int D_SUM=5;
+      const int DD_POS_CHE=6;
+      
+      const int D_ENERGY_TRE1=10;
+      const int D_ENERGY_TRE2=11;
+      const int D_ENERGY_TRE3=12;
+      const int D_ENERGY_TRE4=13;
+      const int D_ENERGY_TRE5=14;
+      const int D_ENERGY_TRESUM=15;
+      const int DD_POS_TRE=16;
+      
       const int D_QDC1=20;
       const int D_QDC2=21;
       const int D_QDC3=22;
@@ -42,6 +42,10 @@ namespace dammIds{
       const int D_QDC5=24;
       const int D_QDCSUM=25;
       const int DD_POS_QDC=26;
+      
+      const int DD_POSNEW_CHE=30;
+      const int DD_POSNEW_TRE=31;
+      const int DD_POSNEW_QDC=32;
       
       const int DD_SINGLE_TRACE=77;
     }
@@ -79,15 +83,22 @@ void PspmtProcessor::DeclarePlots(void) {
     DeclareHistogram1D(D_ENERGY_TRE4, energyBins, "Energy4 from trace");
     DeclareHistogram1D(D_ENERGY_TRE5, energyBins, "Energy5 from trace");
     DeclareHistogram1D(D_ENERGY_TRESUM,  energyBins, "Pspmt Sum");
-    DeclareHistogram2D(DD_POS_TRE, posBins, posBins, "Pspmt pos Raw by Trace1");
+    DeclareHistogram2D(DD_POS_TRE, Bins, Bins, "Pspmt pos Raw by Trace1");
     
-    // 720- QDCs
+    // 1920- QDCs
     DeclareHistogram1D(D_QDC1, energyBins, "Energy1 from QDC");
     DeclareHistogram1D(D_QDC2, energyBins, "Energy2 from QDC");
     DeclareHistogram1D(D_QDC3, energyBins, "Energy3 from QDC");
     DeclareHistogram1D(D_QDC4, energyBins, "Energy4 from QDC");
     DeclareHistogram1D(D_QDC5, energyBins, "Energy5 from QDC");
     DeclareHistogram2D(DD_POS_QDC, posBins, posBins, "Pspmt pos Raw by QDC");
+
+    // 1930~ for new board 
+    DeclareHistogram2D(DD_POSNEW_CHE, Bins, Bins, "Position CHE Newboard");
+    DeclareHistogram2D(DD_POSNEW_TRE, Bins, Bins, "Position TRE Newboard");
+    DeclareHistogram2D(DD_POSNEW_QDC, Bins, Bins, "Position QDC Newboard");
+
+
 
     // Trace
     DeclareHistogram2D(DD_SINGLE_TRACE, traceBins, traceBins2,"Single trace");
@@ -110,6 +121,10 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     double xche=0,yche=0;
     double xtre=0,ytre=0;
     double xqdc=0,yqdc=0;
+    
+    double xnche=0,ynche=0;
+    double xntre=0,yntre=0;
+    double xnqdc=0,ynqdc=0;
     
     static int traceNum;
     
@@ -192,9 +207,22 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	  xqdc=GetPositionX(qdc1,qdc2,qdc3,qdc4);
 	  yqdc=GetPositionY(qdc1,qdc2,qdc3,qdc4);
 	  
+	  xnche=GetPositionXNew(che1,che2,che3,che4);
+	  ynche=GetPositionYNew(che1,che2,che3,che4);
+	  xntre=GetPositionXNew(tre1,tre2,tre3,tre4);
+	  yntre=GetPositionYNew(tre1,tre2,tre3,tre4);
+	  xnqdc=GetPositionXNew(qdc1,qdc2,qdc3,qdc4);
+	  ynqdc=GetPositionYNew(qdc1,qdc2,qdc3,qdc4);
+	  
+	  
 	  plot(DD_POS_CHE,xche,yche);
 	  plot(DD_POS_TRE,xtre,ytre);
 	  plot(DD_POS_QDC,xqdc,yqdc);
+
+	  plot(DD_POSNEW_CHE,xnche,ynche);
+	  plot(DD_POSNEW_TRE,xntre,yntre);
+	  plot(DD_POSNEW_QDC,xnqdc,ynqdc);
+	  
 	  
         }
         
@@ -245,6 +273,27 @@ double PspmtProcessor::GetPositionY(double q1,double q2,double q3,double q4){
   ybottom  = (qbottom/qsum)*512+100;
   
   return ytop;
+}
+
+
+double PspmtProcessor::GetPositionXNew(double q1,double q2,double q3,double q4){
+  double xdiff=0,xsum=0,xpos=0;
+  
+  xdiff = q1-q2;
+  xsum  = q1+q2;
+  xpos  = 512*xdiff/xsum+512;
+  
+  return xpos;
+}
+
+double PspmtProcessor::GetPositionYNew(double q1,double q2,double q3,double q4){
+  double ydiff=0,ysum=0,ypos=0;
+  
+  ydiff = q3-q4;
+  ysum  = q3+q4;
+  ypos  = 512*ydiff/ysum+512;
+  
+  return ypos;
 }
 
 
