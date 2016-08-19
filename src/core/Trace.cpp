@@ -109,9 +109,13 @@ unsigned int Trace::FindMaxInfo(unsigned int lo, unsigned int hi, unsigned int n
     unsigned int low = high - (Globals::get()->trapezoidalWalk() /
 			    (Globals::get()->adcClockInSeconds()*1e9)) - 3;
 
-    if(size() < high)
-        return pixie::U_DELIMITER;
-
+    high = 200;
+    low = 0;
+    
+    if(size() < high){
+      return pixie::U_DELIMITER;
+    }
+    
     Trace::const_iterator itTrace = max_element(begin()+low, end()-(size()-high));
     int maxPos = int(itTrace-begin());
 
