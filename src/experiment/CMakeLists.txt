@@ -1,5 +1,5 @@
 set(EXPERIMENT_SOURCES
-  TemplateExpProcessor.cpp
+  PspmtTestProcessor.cpp
 )
 
 add_library(ExperimentObjects OBJECT ${EXPERIMENT_SOURCES})

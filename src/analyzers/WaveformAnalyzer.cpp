@@ -25,6 +25,7 @@ WaveformAnalyzer::WaveformAnalyzer() : TraceAnalyzer() {
     knownTypes_.push_back("tvandle");
     knownTypes_.push_back("pulser");
     knownTypes_.push_back("labr3");
+    knownTypes_.push_back("pspmt");
 }
 
 void WaveformAnalyzer::Analyze(Trace &trace,
@@ -43,16 +44,16 @@ void WaveformAnalyzer::Analyze(Trace &trace,
     pair<unsigned int, unsigned int> range = globals->waveformRange(detType+":"+detSubtype);
 
     if( detType == "beta" && detSubtype == "double" && tagMap.find("timing") != tagMap.end())
-	range = globals->waveformRange(detType+":"+detSubtype+":timing");
+	    range = globals->waveformRange(detType+":"+detSubtype+":timing");
     
-    double qdc = trace.DoQDC(trace.FindMaxInfo(range.first, range.second)-range.first,
-			     range.second+range.first);
+    double qdc = trace.DoQDC(trace.FindMaxInfo(range.first,range.second)-range.first,
+                             range.second+range.first);
 
     trace.InsertValue("qdcToMax", qdc/trace.GetValue("maxval"));
 
     if(detSubtype == "liquid")
         trace.DoDiscrimination(globals->discriminationStart(),
-                range.second - globals->discriminationStart());
+                               range.second - globals->discriminationStart());
 
     EndAnalyze();
 }
