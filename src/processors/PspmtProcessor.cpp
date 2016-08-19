@@ -199,7 +199,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         }
         
         if(che1>0 && che2>0 && che3>0 && che4>0){
-	  
+
 	  xche=GetPositionX(che1,che2,che3,che4);
 	  yche=GetPositionY(che1,che2,che3,che4);
 	  xtre=GetPositionX(tre1,tre2,tre3,tre4);
@@ -213,6 +213,8 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	  yntre=GetPositionYNew(tre1,tre2,tre3,tre4);
 	  xnqdc=GetPositionXNew(qdc1,qdc2,qdc3,qdc4);
 	  ynqdc=GetPositionYNew(qdc1,qdc2,qdc3,qdc4);
+	  	  
+	  
 	  
 	  
 	  plot(DD_POS_CHE,xche,yche);
@@ -277,23 +279,21 @@ double PspmtProcessor::GetPositionY(double q1,double q2,double q3,double q4){
 
 
 double PspmtProcessor::GetPositionXNew(double q1,double q2,double q3,double q4){
-  double xdiff=0,xsum=0,xpos=0;
+  double xdiff=0,xsum=0,xposnew=0;
   
   xdiff = q1-q2;
   xsum  = q1+q2;
-  xpos  = 512*xdiff/xsum+512;
+  xposnew  = 512*xdiff/xsum+512;
   
-  return xpos;
+  return xposnew;
 }
 
 double PspmtProcessor::GetPositionYNew(double q1,double q2,double q3,double q4){
-  double ydiff=0,ysum=0,ypos=0;
+  double ydiff=0,ysum=0,yposnew=0;
   
   ydiff = q3-q4;
   ysum  = q3+q4;
-  ypos  = 512*ydiff/ysum+512;
+  yposnew  = 512*ydiff/ysum+512;
   
-  return ypos;
+  return yposnew;
 }
-
-

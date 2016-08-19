@@ -27,11 +27,11 @@ public:
    * \param [in] event : the event to process
    * \return Returns true if the processing was successful */
   virtual bool Process(RawEvent &event);
-  
   virtual double GetPositionX(double q1,double q2,double q3,double q4);
   virtual double GetPositionY(double q1,double q2,double q3,double q4);
-  virtual double GetPositionXNew(double q1,double q2, double q3, double q4);
-  virtual double GetPositionYNew(double q1,double q2, double q3, double q4);
+  virtual double GetPositionXNew(double q1,double q2,double q3,double q4);
+  virtual double GetPositionYNew(double q1,double q2,double q3,double q4);
+  
   
 private:
   struct PspmtData {
