@@ -49,7 +49,7 @@
 #include "TraceFilterAnalyzer.hpp"
 #include "WaveformAnalyzer.hpp"
 
-#include "PspmtTestProcessor.hpp"
+#include "TemplateExpProcessor.hpp"
 
 #ifdef useroot
 #include "RootProcessor.hpp"
@@ -214,8 +214,8 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
                 vecProcess.push_back(new PspmtProcessor());
         } else if (name == "TemplateProcessor") {
             vecProcess.push_back(new TemplateProcessor());
-        } else if (name == "PspmtTestProcessor") {
-            vecProcess.push_back(new PspmtTestProcessor());
+        } else if (name == "TemplateExpProcessor") {
+            vecProcess.push_back(new TemplateExpProcessor());
 	}
 #ifdef useroot
         else if (name == "RootProcessor") {
