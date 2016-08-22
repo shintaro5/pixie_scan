@@ -245,8 +245,9 @@ void DetectorDriver::LoadProcessors(Messenger& m) {
         m.detail("Loading " + name);
 
 	if(name == "TraceFilterAnalyzer") {
-	    bool findPileups = analyzer.attribute("FindPileup").as_bool(false);
-	    vecAnalyzer.push_back(new TraceFilterAnalyzer(findPileups));
+	    bool findPileups = analyzer.attribute("find_pileup").as_bool(false);
+        bool verbose = analyzer.attribute("verbose").as_bool(false);
+	    vecAnalyzer.push_back(new TraceFilterAnalyzer(findPileups, verbose));
 	} else if(name == "TauAnalyzer") {
             vecAnalyzer.push_back(new TauAnalyzer());
         } else if (name == "TraceExtractor") {

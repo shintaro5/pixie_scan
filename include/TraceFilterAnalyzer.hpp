@@ -18,14 +18,14 @@
 class TraceFilterAnalyzer : public TraceAnalyzer {
 public:
     /** Default Constructor */
-    TraceFilterAnalyzer(){};
+    TraceFilterAnalyzer() {};
 
     /** Constructor 
      * \param [in] analyzePileup : True if we want to analyze pileups */
-    TraceFilterAnalyzer(const bool &analyzePileup);
+    TraceFilterAnalyzer(const bool &analyzePileup = false, const bool &verbose = false);
 
     /** Default Destructor */
-    virtual ~TraceFilterAnalyzer(){};
+    virtual ~TraceFilterAnalyzer() {};
 
     /** Declare the plots for the Analyzer */
     virtual void DeclarePlots(void);
@@ -37,13 +37,16 @@ public:
      * \param [in] tagmap : map of the tags for the channel */
     virtual void Analyze(Trace &trace, const std::string &type,
                          const std::string &subtype,
-                         const std::map<std::string,int> &tagmap);
+                         const std::map<std::string, int> &tagmap);
+
 private:
     bool analyzePileup_; //!< True if looking for pileups
+    bool verbose_;///< True if we are going to have verbose filtering
     TrapFilterParameters trigPars_; //!< Trigger filter parameters
     TrapFilterParameters enPars_; //!< energy filter parametersf
     std::vector<double> fastFilter;   //!< fast filter of trace
     std::vector<double> energyFilter; //!< slow filter of trace
 
 };
+
 #endif // __TRACEFILTERER_HPP_

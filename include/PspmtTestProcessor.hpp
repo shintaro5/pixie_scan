@@ -44,8 +44,6 @@ private:
     void SetupRootOutput(void);
     TFile *prootfile_; //! pointer to root file
     TTree *proottree_; //! pointer to root tree
-    TH2D *ptvsge_;    //! pointer to ROOT 2D histogram
-    TH1D *ptsize_;     //! pointer to ROOT 1D histogram
 #endif
 };
 #endif
