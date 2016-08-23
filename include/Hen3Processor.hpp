@@ -3,11 +3,11 @@
  * Processor for 3Hen detectors
  */
 #ifndef __HEN3PROCESSOR_HPP_
-#define __HEN3PROCESSOR_HPP_ 1
+#define __HEN3PROCESSOR_HPP_
 
 #include "EventProcessor.hpp"
 
-//! Processor to handle 3Hen detector
+/// Processor to handle 3Hen detector
 class Hen3Processor : public EventProcessor {
 public:
     /** Default Constructor */
@@ -29,7 +29,5 @@ protected:
      * \param [in] nTime : the neutron time
      * \return the Event data for the bet matching neutron to beta */
     EventData BestBetaForNeutron(double nTime);
-    static double const cycleTimePlotResolution_ = 1e-3;//!< Plot resolution for the Cycle time
-    static double const diffTimePlotResolution_ = 1e-6;//!< Plot resolution for the time diffs
 };
 #endif // __HEN3PROCESSOR_H_

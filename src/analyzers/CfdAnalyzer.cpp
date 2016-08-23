@@ -24,8 +24,9 @@ CfdAnalyzer::CfdAnalyzer() : TraceAnalyzer() {
 }
 
 void CfdAnalyzer::Analyze(Trace &trace, const std::string &detType,
-                          const std::string &detSubtype) {
-    TraceAnalyzer::Analyze(trace, detType, detSubtype);
+                          const std::string &detSubtype,
+                          const std::map<std::string, int> & tagMap) {
+    TraceAnalyzer::Analyze(trace, detType, detSubtype, tagMap);
     Globals *globals = Globals::get();
     unsigned int saturation = (unsigned int)trace.GetValue("saturation");
     if(saturation > 0) {
@@ -34,8 +35,9 @@ void CfdAnalyzer::Analyze(Trace &trace, const std::string &detType,
     }
     double aveBaseline = trace.GetValue("baseline");
     unsigned int maxPos = (unsigned int)trace.GetValue("maxpos");
-    unsigned int waveformLow  = (unsigned int)globals->waveformRange().first;
-    unsigned int waveformHigh = (unsigned int)globals->waveformRange().second;
+    pair<unsigned int, unsigned int> range = globals->waveformRange("default");
+    unsigned int waveformLow  = range.first;
+    unsigned int waveformHigh = range.second;
     unsigned int delay = 2;
     double fraction = 0.25;
     vector<double> cfd;

@@ -31,7 +31,7 @@
  *       See git commits comments.
 */
 #ifndef __DETECTORDRIVER_HPP_
-#define __DETECTORDRIVER_HPP_ 1
+#define __DETECTORDRIVER_HPP_
 
 #include <set>
 #include <string>
@@ -87,9 +87,8 @@ public:
     * have been created.  Then experiment specific processing is performed.
     * Currently, both RMS and MTC processing is available.  After all processing
     * has occured, appropriate plotting routines are called.
-    * \param [in] rawev : the raw event to process
-    * \return An unused integer, maybe change to void */
-    int ProcessEvent(RawEvent& rawev);
+    * \param [in] rawev : the raw event to process */
+    void ProcessEvent(RawEvent& rawev);
 
     /*! \brief Check threshold and calibrate each channel.
      * Check the thresholds and calibrate the energy for each channel using the
@@ -102,16 +101,15 @@ public:
     /*! Called from PixieStd.cpp during initialization.
      * The calibration file Config.xml is read using the function ReadCal() and
      * checked to make sure that all channels have a calibration.
-     * \param [in] rawev : the raw event to initialize with
-     * \return an unused integer maybe change to void */
-    int Init(RawEvent& rawev);
+     * \param [in] rawev : the raw event to initialize with */
+    void Init(RawEvent& rawev);
 
     /*! Plot the raw energies of each channel into the damm spectrum number
      * assigned to it in the map file with an offset as defined in
      * DammPlotIds.hpp
      * \param [in] chan : the channel to plot
      * \return an unused integer maybe use void*/
-    int PlotRaw(const ChanEvent *);
+    int PlotRaw(const ChanEvent *chan);
 
     /*! Plot the calibrated energies of each channel into the damm spectrum
      * number assigned to it in the map file with an offset as defined in
@@ -144,12 +142,12 @@ public:
 
     /** \return the list of the Event Processors in the analysis */
     const std::vector<EventProcessor *>& GetProcessors(void) const {
-        return vecProcess;
+        return(vecProcess);
     }
 
     /** \return The requested event processor
-     * \param [in] type : the name of the processor to return */
-    std::vector<EventProcessor *> GetProcessors(const std::string &type) const;
+     * \param [in] name : the name of the processor to return */
+    EventProcessor* GetProcessor(const std::string &name) const;
 
     /** \return the set of detectors used in the analysis */
     const std::set<std::string> &GetUsedDetectors(void) const;

@@ -20,7 +20,7 @@
 * "parent" - name of a parent place or "root" if there is no parent
 * "name" - name of the place to be added or created, if the name
 *          follow a pattern "aaa_bbb_X-Y" where X, Y are integer
-*          numbers, it is understood a as range of places, e.g.
+*          numbers, it is understood as a range of places, e.g.
 *          ge_clover_high_0-3
 *          will be parsed as ge_clover_high_0, ge_clover_high_1,
 *          ge_clover_high_2, ge_clover_high_3
@@ -28,7 +28,7 @@
 *          The primary use of this synatax is to include basic places
 *          (automatically created) in the tree.
 *  "type" - must be of one of existing Places type, currently these
-*           are ("PlaceDetector", "PlaceThreshold", "PlaceThresholdOR,
+*           are ("PlaceDetector", "PlaceThreshold", "PlaceThresholdOR",
 *           "PlaceCounter", "PlaceOR", "PlaceAND").
 *
 *           If left empty, it will be assumed

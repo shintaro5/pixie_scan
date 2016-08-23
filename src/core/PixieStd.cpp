@@ -91,7 +91,9 @@ bool MakeModuleData(const word_t *data, unsigned long nWords,
  * */
 int ReadBuffDataA(word_t *lbuf, unsigned long *BufLen,
 		 vector<ChanEvent *> &eventList);
-int ReadBuffDataDF(word_t *lbuf, unsigned long *BufLen,
+int ReadBuffDataD(word_t *lbuf, unsigned long *BufLen,
+		 vector<ChanEvent *> &eventList);
+int ReadBuffDataF(word_t *lbuf, unsigned long *BufLen,
 		 vector<ChanEvent *> &eventList);
 /**
  * This function pointer will be initialized to point to
@@ -99,6 +101,13 @@ int ReadBuffDataDF(word_t *lbuf, unsigned long *BufLen,
  */
 int (*ReadBuffData)(word_t *lbuf, unsigned long *BufLen,
                     vector<ChanEvent *> &eventList);
+
+/// Catch the exit call from scanor and clean up c++ objects
+extern "C" void cleanup_() {
+    std::cout << "\nCleaning up...\n";
+    DetectorDriver* driver = DetectorDriver::get();
+    delete(driver);
+}
 
 /** \fn extern "C" void hissub_(unsigned short *ibuf[],unsigned short *nhw)
  * \brief interface between scan and C++
@@ -420,8 +429,10 @@ extern "C" void hissub_(unsigned short *ibuf[],unsigned short *nhw)
         string revision = Globals::get()->revision();
         // Initialize function pointer to point to
         // correct version of ReadBuffData
-        if (revision == "D" || revision == "F")
-            ReadBuffData = ReadBuffDataDF;
+	if(revision == "F")
+            ReadBuffData = ReadBuffDataF;
+        if (revision == "D" || revision == "DF")
+            ReadBuffData = ReadBuffDataD;
         else if (revision == "A")
             ReadBuffData = ReadBuffDataA;
 
@@ -479,7 +490,7 @@ extern "C" void hissub_(unsigned short *ibuf[],unsigned short *nhw)
         /* while the current location in the buffer has not gone beyond the end
          * of the buffer (ignoring the last three delimiters,
          * continue reading */
-        while (nWords < (nhw[0]/2 - 6)) {
+        while (nWords < (unsigned int)(nhw[0]/2 - 6)) {
             /*
             Retrieve the record length and the vsn number
             */
@@ -578,7 +589,7 @@ extern "C" void hissub_(unsigned short *ibuf[],unsigned short *nhw)
                 break;
             }
         } // while still have words
-        if (nWords > nhw[0] / 2 - 6) {
+        if (nWords > (unsigned int)nhw[0] / 2 - 6) {
             ss << "This actually happens!";
             messenger.run_message(ss.str());
             ss.str("");

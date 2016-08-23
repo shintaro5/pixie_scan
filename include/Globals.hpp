@@ -6,20 +6,28 @@
 #define __GLOBALS_HPP_
 
 #include <algorithm>
+#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include <cmath>
 #include <cstdlib>
 #include <stdint.h>
 
 #include "pugixml.hpp"
 
-#include "pixie16app_defs.h"
-
 #include "Exceptions.hpp"
 #include "Messenger.hpp"
+#include "pixie16app_defs.h"
+#include "TrapFilterParameters.hpp"
+
+/** A macro defining what kind of NAN to throw */
+#ifndef NAN
+#include <limits>
+#define NAN (numeric_limits<float>::quiet_NaN())
+#endif
 
 /** \brief Pixie module related things that should not change between revisions
  *
@@ -36,7 +44,7 @@ namespace pixie {
     *   also used to indicate when a quantity is out of range or peculiar data
     *   this should theoretically be the same as UINT_MAX in climits header
     */
-    const pixie::word_t U_DELIMITER = (pixie::word_t)-1;
+    const pixie::word_t U_DELIMITER = (pixie::word_t) -1;
 
     /** THIS SHOULD NOT BE SET LARGER THAN 1,000,000
      * this defines the maximum amount of data that will be
@@ -48,7 +56,14 @@ namespace pixie {
     const pixie::word_t clockVsn = 1000;
     /** Number of channels in a module. */
     const size_t numberOfChannels = 16;
-};
+
+    /** \return tst bit function from pixie16 files
+     * \param [in] bit : bit to test with
+     * \param [in] value : value to compare with */
+    inline unsigned long TstBit(unsigned short bit, unsigned long value) {
+        return ((value & (unsigned long) (pow(2.0, (double) bit))) >> bit);
+    }
+}
 
 //! Namespace defining some buffer related constants
 namespace readbuff {
@@ -67,7 +82,7 @@ namespace strings {
     /** Converts string to double or throws an exception if not successful
     * \param [in] s : String to convert to double
     * \return The double created from the string */
-    inline double to_double (std::string s) {
+    inline double to_double(std::string s) {
         std::istringstream iss(s);
         double value;
         if (!(iss >> value)) {
@@ -82,7 +97,7 @@ namespace strings {
     /** Converts string to int or throws an exception if not successful
     * \param [in] s : string to convert to int
     * \return Integer made out of input string */
-    inline int to_int (std::string s) {
+    inline int to_int(std::string s) {
         std::istringstream iss(s);
         int value;
         if (!(iss >> value)) {
@@ -100,7 +115,7 @@ namespace strings {
       * problem for true and false words.
       * \param [in] s : String to convert to bool
       * \return A bool from the input string */
-    inline bool to_bool (std::string s) {
+    inline bool to_bool(std::string s) {
         std::transform(s.begin(), s.end(), s.begin(), ::tolower);
         if (s == "true" || s == "1")
             return true;
@@ -132,92 +147,117 @@ namespace strings {
         tokenized.push_back(str);
         return tokenized;
     }
-};
+}
 
 /** \brief Singleton class holding global parameters.*/
 class Globals {
 public:
     /** \return only instance of Globals class.*/
-    static Globals* get();
+    static Globals *get();
+
     ~Globals();
 
     /** \return true if any reject region was defined */
     bool hasReject() const { return hasReject_; }
 
+    /** \return true if we will define the raw histograms */
+    bool hasRaw() const { return (hasRaw_); }
+
     /** \return the adc clock in seconds */
-    double adcClockInSeconds() const {return adcClockInSeconds_;}
+    double adcClockInSeconds() const { return adcClockInSeconds_; }
+
+    /** \return the length of the big VANDLE bars length in cm */
+    double bigLength() const { return (bigLength_); }
+
+    /** \return the length of the big VANDLE bars in ns */
+    double bigLengthTime() const { return (bigLength_ / speedOfLightBig_); }
+
     /** \return the pixie clock in seconds */
-    double clockInSeconds() const {return(clockInSeconds_);}
+    double clockInSeconds() const { return (clockInSeconds_); }
+
+    /** \return the starting point in the trace for the n-gamma discrimination */
+    double discriminationStart() const { return (discriminationStart_); }
+
     /** \return the event size in seconds */
-    double eventInSeconds() const {return eventInSeconds_; }
-    /** \return the energy contraction */
-    double energyContraction() const { return energyContraction_; }
+    double eventInSeconds() const { return eventInSeconds_; }
+
     /** \return the filter clock in seconds */
     double filterClockInSeconds() const { return filterClockInSeconds_; }
-    /** \return the length of the big VANDLE bars length in cm */
-    double bigLength() const {return(bigLength_);}
-    /** \return the length of the big VANDLE bars in ns */
-    double bigLengthTime() const {return(bigLength_/speedOfLightBig_);}
+
     /** \return the length of the medium VANDLE bars in cm */
-    double mediumLength() const {return(mediumLength_);}
+    double mediumLength() const { return (mediumLength_); }
+
     /** \return the length of the medium VANDLE bars in ns */
-    double mediumLengthTime() const {return(mediumLength_/speedOfLightMedium_);}
+    double mediumLengthTime() const { return (mediumLength_ / speedOfLightMedium_); }
+
     /** \return the mass of the neutron in MeV/c/c */
-    double neutronMass() const {return(neutronMass_);}
-    /** \return the length of the small VANDLE bar in cm */
-    double smallLength() const {return(smallLength_);}
-    /** \return the length of the small VANDLE bar in ns */
-    double smallLengthTime() const {return(smallLength_/speedOfLightSmall_);}
-    /** \return the speed of light in cm/ns */
-    double speedOfLight() const {return(speedOfLight_);}
-    /** \return the speed of light in the Big VANDLE bars in cm/ns */
-    double speedOfLightBig() const {return(speedOfLightBig_);}
-    /** \return the speed of light in the medium VANDLE bars in cm/ns */
-    double speedOfLightMedium() const {return(speedOfLightMedium_);}
-    /** \return the speed of light in the small VANDLE bars in cm/ns */
-    double speedOfLightSmall() const {return(speedOfLightSmall_);}
-    /** \return the starting point in the trace for the n-gamma discrimination */
-    double discriminationStart() const {return(discriminationStart_);}
+    double neutronMass() const { return (neutronMass_); }
+
     /** \return the compression factor for the QDCs from the trace (VANDLE related) */
-    double qdcCompression() const {return (qdcCompression_);}
+    double qdcCompression() const { return (qdcCompression_); }
+
+    /** \return the length of the small VANDLE bar in cm */
+    double smallLength() const { return (smallLength_); }
+
+    /** \return the length of the small VANDLE bar in ns */
+    double smallLengthTime() const { return (smallLength_ / speedOfLightSmall_); }
+
+    /** \return the speed of light in cm/ns */
+    double speedOfLight() const { return (speedOfLight_); }
+
+    /** \return the speed of light in the Big VANDLE bars in cm/ns */
+    double speedOfLightBig() const { return (speedOfLightBig_); }
+
+    /** \return the speed of light in the medium VANDLE bars in cm/ns */
+    double speedOfLightMedium() const { return (speedOfLightMedium_); }
+
+    /** \return the speed of light in the small VANDLE bars in cm/ns */
+    double speedOfLightSmall() const { return (speedOfLightSmall_); }
+
     /** \return the cutoff on the std deviation of the baseline for fitting */
-    double sigmaBaselineThresh() const {return(sigmaBaselineThresh_);}
+    double sigmaBaselineThresh() const { return (sigmaBaselineThresh_); }
+
     /** \return the cutoff on the std deviation of the baseline for fitting */
-    double siPmtSigmaBaselineThresh() const {return(siPmtSigmaBaselineThresh_);}
+    double siPmtSigmaBaselineThresh() const { return (siPmtSigmaBaselineThresh_); }
+
+    /** \return the frequency of the system clock in Hz*/
+    double systemClockFreqInHz() const { return (sysClockFreqInHz_); }
+
     /** \return the trace delay of the traces in ns */
-    double traceDelay() const {return(traceDelay_);}
+    double traceDelay() const { return (traceDelay_); }
+
     /** \return the trace length of the traces in ns */
-    double traceLength() const {return(traceLength_);}
+    double traceLength() const { return (traceLength_); }
+
     /** \return the approximate size of the trapezoidal walk in ns */
-    double trapezoidalWalk() const {return(trapezoidalWalk_);}
+    double trapezoidalWalk() const { return (trapezoidalWalk_); }
+
     /** \return the event width */
     int eventWidth() const { return eventWidth_; }
+
     /** \return the waveform range for standard PMT signals */
-    std::pair<unsigned int, unsigned int> waveformRange() const {return(waveformRange_);}
-    /** \return the waveform range for a fast SiPMT signal */
-    std::pair<unsigned int, unsigned int> siPmtWaveformRange() const {return(siPmtWaveformRange_);}
-    /** \return the waveform range for a LaBr3 signal */
-    std::pair<unsigned int, unsigned int> labr3WaveformRange() const {return(labr3WaveformRange_);}
-    /** \return the small VANDLE fitting parameters */
-    std::pair<double,double> smallVandlePars() {return(smallVandlePars_);}
-    /** \return the medium VANDLE fitting parameters */
-    std::pair<double,double> mediumVandlePars() {return(mediumVandlePars_);}
-    /** \return the big VANDLE fitting parameters */
-    std::pair<double,double> bigVandlePars() {return(bigVandlePars_);}
-    /** \return the Single Beta detector fitting parameters */
-    std::pair<double,double> singleBetaPars() {return(singleBetaPars_);}
-    /** \return the Double Beta detector fitting parameters */
-    std::pair<double,double> doubleBetaPars() {return(doubleBetaPars_);}
-    /** \return the Pulser fitting parameters */
-    std::pair<double,double> pulserPars() {return(pulserPars_);}
-    /** \return the Teeny-VANDLE fitting parameters */
-    std::pair<double,double> tvandlePars() {return(tvandlePars_);}
-    /** \return the Liquid Scintillator fitting paramters */
-    std::pair<double,double> liquidScintPars() {return(liquidScintPars_);}
-    /** \return the LaBr3 r6231-100 fitting parameters */
-    std::pair<double,double> labr3_r6231_100Pars() {return(labr3_r6231_100Pars_);}
-    /** \return the LaBr3 r7724-100 fitting parameters */
-    std::pair<double,double> labr3_r7724_100Pars() {return(labr3_r7724_100Pars_);}
+    std::pair<unsigned int, unsigned int> waveformRange(const std::string &str) const {
+        if (waveformRanges_.find(str) != waveformRanges_.end())
+            return (waveformRanges_.find(str)->second);
+        return (std::make_pair(5, 10));
+    }
+
+    /** \return the requested fitting parameters */
+    std::pair<double, double> fitPars(const std::string &str) const {
+        if (fitPars_.find(str) != fitPars_.end())
+            return (fitPars_.find(str)->second);
+        return (std::make_pair(0.254373, 0.208072));
+    }
+
+    /** \return the trapezoidal filter parameters for the requested detector type:subtype */
+    std::pair<TrapFilterParameters, TrapFilterParameters> trapFiltPars(const std::string &str) const {
+        if (trapFiltPars_.find(str) != trapFiltPars_.end())
+            return (trapFiltPars_.find(str)->second);
+        return (std::make_pair(TrapFilterParameters(125, 125, 10),
+                               TrapFilterParameters(125, 125, 10)));
+    }
+
+
     /*! \return Joined path to the passed filename by adding the configPath_
      * This is temporary solution as long as there are some files not
      * incorporated into Config.xml
@@ -227,70 +267,74 @@ public:
         ss << configPath_ << fileName;
         return ss.str();
     }
+
     /** \return the revision for the data */
     std::string revision() const { return revision_; }
+
     /** \return the maximum words */
     unsigned int maxWords() const { return maxWords_; }
+
     /** \return max number of traces stored in 2D spectra
      * with traces. If not set, by default is 16. */
     unsigned short numTraces() const { return numTraces_; }
+
     /*! \return rejection regions to exclude from scan.
      * Values should be given in seconds in respect to the beginning
      of the file */
-    std::vector< std::pair<int, int> > rejectRegions() const {return reject_; };
+    std::vector<std::pair<int, int> > rejectRegions() const { return reject_; };
 private:
     /** Default Constructor */
     Globals();
-    Globals(Globals const&);//!< Overload of the constructor
-    void operator=(Globals const&); //!< copy constructor
-    static Globals* instance; //!< Create the static instance of the class
+
+    Globals(Globals const &);//!< Overload of the constructor
+    void operator=(Globals const &); //!< copy constructor
+    static Globals *instance; //!< Create the static instance of the class
 
     /** Check that some of the values make sense */
     void SanityCheck();
+
     /** Warn that we have an unknown parameter in the XML configuration file
     * \param [in] m : an instance of the messenger to send the warning
     * \param [in] it : an iterator pointing to the location of the unknown */
     void WarnOfUnknownParameter(Messenger &m, pugi::xml_node_iterator &it);
 
-    bool hasReject_;//!< Has a rejected
+    bool hasReject_;//!< Has a rejection region
+    bool hasRaw_; //!< True for plotting Raw Histograms in DAMM
+
     double adcClockInSeconds_; //!< adc clock in second
     double clockInSeconds_;//!< the ACQ clock in seconds
-    double energyContraction_;//!< energy contraction
+    double discriminationStart_;//!< starting sample for the n-gamma discrimination
     double eventInSeconds_;//!< event width in seconds
     double filterClockInSeconds_;//!< filter clock in seconds
     double bigLength_;//!< length of big VANDLE bars in cm
     double mediumLength_;//!< length of medium VANDLE bars in cm
     double neutronMass_;//!< mass of neutrons in MeV/c/c
+    double qdcCompression_;//!< QDC compression factor for VANDLE related plots
     double smallLength_;//!< length of small VANDLE bars in cm
+    double sigmaBaselineThresh_;//!< threshold on fitting for Std dev. of the baseline
+    double siPmtSigmaBaselineThresh_;//!< threshold on fitting for Std dev. of the baseline for SiPMTs
     double speedOfLight_;//!< speed of light in cm/ns
     double speedOfLightBig_;//!< speed of light in big VANDLE bars in cm/ns
     double speedOfLightMedium_;//!< speed of light in medium VANDLE bars in cm/ns
     double speedOfLightSmall_;//!< speed of light in small VANDLE bars in cm/ns
-    double discriminationStart_;//!< starting sample for the n-gamma discrimination
-    double qdcCompression_;//!< QDC compression factor for VANDLE related plots
-    double sigmaBaselineThresh_;//!< threshold on fitting for Std dev. of the baseline
-    double siPmtSigmaBaselineThresh_;//!< threshold on fitting for Std dev. of the baseline for SiPMTs
+    double sysClockFreqInHz_; //!< frequency of the system clock
     double traceDelay_;//!< the trace delay in ns
     double traceLength_;//!< the trace length in ns
     double trapezoidalWalk_;//!< the approximate walk in ns of the trap filter
+
     int eventWidth_; //!< the size of the events
-    std::pair<unsigned int, unsigned int> waveformRange_; //!< Range for the waveform
-    std::pair<unsigned int, unsigned int> siPmtWaveformRange_; //!< Range for the waveform of a Fast SiPmt
-    std::pair<unsigned int, unsigned int> labr3WaveformRange_; //!< Range for the waveform of a LaBr3
-    std::pair<double,double> smallVandlePars_;//!< small VANDLE parameters for fitting
-    std::pair<double,double> mediumVandlePars_;//!< medium VANDLE parameters for fitting
-    std::pair<double,double> bigVandlePars_;//!< big VANDLE parameters for fitting
-    std::pair<double,double> singleBetaPars_;//!< Single Beta parameters for fitting
-    std::pair<double,double> doubleBetaPars_;//!< Double Beta parameters for fitting
-    std::pair<double,double> pulserPars_;//!< Pulser parameters for fitting
-    std::pair<double,double> tvandlePars_;//!< Teeny-VANDEL parameters for fitting.
-    std::pair<double,double> liquidScintPars_;//!< liquid scint pars for fitting
-    std::pair<double,double> labr3_r6231_100Pars_; //!< Parameters for the r6231_100 LaBr3 PMT
-    std::pair<double,double> labr3_r7724_100Pars_; //!< Parameters for the r7724_100 LaBr3 PMT
+
+    std::map<std::string, std::pair<unsigned int, unsigned int> > waveformRanges_; //!< Map containing ranges for the waveforms
+    std::map<std::string, std::pair<double, double> > fitPars_; //!< Map containing all of the parameters to be used in the fitting analyzer for a type:subtype
+    std::map<std::string, std::pair<TrapFilterParameters, TrapFilterParameters> > trapFiltPars_; //!<Map containing all of the trapezoidal filter parameters for a given type:subtype
+
     std::string configPath_; //!< configuration path
     std::string revision_;//!< the pixie revision
+
     unsigned int maxWords_;//!< maximum words in the
     unsigned short numTraces_;//!< number of traces to plot
-    std::vector< std::pair<int, int> > reject_;//!< rejection range in time
+
+    std::vector<std::pair<int, int> > reject_;//!< rejection range in time
 };
+
 #endif

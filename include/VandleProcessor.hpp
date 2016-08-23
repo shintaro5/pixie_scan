@@ -35,7 +35,8 @@ public:
     /** Constructor taking a list of detector types as an argument
      * \param [in] typeList : the list of bar types that are in the analysis
      * \param [in] res : The resolution of the DAMM histograms
-     * \param [in] offset : The offset of the DAMM histograms */
+     * \param [in] offset : The offset of the DAMM histograms 
+     * \param [in] numStarts : number of starts we have to process */
     VandleProcessor(const std::vector<std::string> &typeList,
                     const double &res, const double &offset,
                     const unsigned int &numStarts);
@@ -49,6 +50,26 @@ public:
     * \param [in] event : the event to process
     * \return Returns true if the processing was successful */
     virtual bool Process(RawEvent &event);
+
+    /** \brief Correct the time of flight based on the geometry of the setup
+     * \param [in] TOF : The time of flight to correct
+     * \param [in] corRadius : the corrected radius for the flight path
+     * \param [in] z0 : perpendicular distance from the source to bar
+     * \return True if the retrieval was successful. */
+    virtual double CorrectTOF(const double &TOF, const double &corRadius,
+                              const double &z0) {
+        return((z0/corRadius)*TOF);
+    }
+    
+    /** \return the map of the build VANDLE bars */
+    BarMap GetBars(void) {return(bars_);}
+    /** \return true if we requested small bars in the xml */
+    bool GetHasSmall(void) {return(hasSmall_);}
+    /** \return true if we requested medium bars in the xml  */
+    bool GetHasMed(void) {return(hasMed_);}
+    /** \return true if we requsted large bars in the xml */
+    bool GetHasBig(void) {return(hasBig_);}
+
 protected:
     BarMap bars_;//!< A map to hold all the bars
     TimingMap starts_;//!< A map to to hold all the starts
@@ -66,16 +87,6 @@ protected:
     bool hasMed_; //!< True if medium bars were requested in the Config
 
     unsigned int numStarts_; //!< The number of starts set in the Config File
-
-    /** \brief Correct the time of flight based on the geometry of the setup
-    * \param [in] TOF : The time of flight to correct
-    * \param [in] corRadius : the corrected radius for the flight path
-    * \param [in] z0 : perpendicular distance from the source to bar
-    * \return True if the retrieval was successful. */
-    virtual double CorrectTOF(const double &TOF, const double &corRadius,
-                              const double &z0) {
-        return((z0/corRadius)*TOF);
-    };
 private:
     /** Analyze the data for scenarios with Bar Starts; e.g. Double Beta
      * detectors */

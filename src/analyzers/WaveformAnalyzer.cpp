@@ -7,8 +7,6 @@
  *\author S. V. Paulauskas
  *\date 16 July 2009
 */
-#include <algorithm>
-#include <iostream>
 #include <numeric>
 #include <string>
 
@@ -19,8 +17,7 @@
 using namespace std;
 
 WaveformAnalyzer::WaveformAnalyzer() : TraceAnalyzer() {
-    name = "Waveform";
-
+    name = "WaveformAnalyzer";
     knownTypes_.push_back("vandle");
     knownTypes_.push_back("beta");
     knownTypes_.push_back("beta_scint");
@@ -28,12 +25,14 @@ WaveformAnalyzer::WaveformAnalyzer() : TraceAnalyzer() {
     knownTypes_.push_back("tvandle");
     knownTypes_.push_back("pulser");
     knownTypes_.push_back("labr3");
+    knownTypes_.push_back("pspmt");
 }
 
 void WaveformAnalyzer::Analyze(Trace &trace,
                                const std::string &detType,
-                               const std::string &detSubtype) {
-    TraceAnalyzer::Analyze(trace, detType, detSubtype);
+                               const std::string &detSubtype,
+                               const std::map<std::string, int> & tagMap) {
+    TraceAnalyzer::Analyze(trace, detType, detSubtype,tagMap);
 
     if(CheckIfUnknown(detType) || trace.HasValue("saturation")){
         EndAnalyze();
@@ -42,22 +41,19 @@ void WaveformAnalyzer::Analyze(Trace &trace,
 
     Globals *globals = Globals::get();
 
-    pair<unsigned int, unsigned int> range = globals->waveformRange();
-    if(detType == "beta" && detSubtype == "double")
-        range = globals->siPmtWaveformRange();
-    if(detType == "labr3")
-        range = globals->labr3WaveformRange();
-    unsigned int startDiscrimination = globals->discriminationStart();
-    unsigned int maxPos = trace.FindMaxInfo(range.first, range.second);
+    pair<unsigned int, unsigned int> range = globals->waveformRange(detType+":"+detSubtype);
 
-    double qdc = trace.DoQDC(maxPos-range.first,
-                            range.second+range.first);
+    if( detType == "beta" && detSubtype == "double" && tagMap.find("timing") != tagMap.end())
+	    range = globals->waveformRange(detType+":"+detSubtype+":timing");
+    
+    double qdc = trace.DoQDC(trace.FindMaxInfo(range.first,range.second)-range.first,
+                             range.second+range.first);
 
     trace.InsertValue("qdcToMax", qdc/trace.GetValue("maxval"));
 
     if(detSubtype == "liquid")
-        trace.DoDiscrimination(startDiscrimination,
-                range.second - startDiscrimination);
+        trace.DoDiscrimination(globals->discriminationStart(),
+                               range.second - globals->discriminationStart());
 
     EndAnalyze();
 }

@@ -10,32 +10,29 @@
 #include "RawEvent.hpp"
 #include "EventProcessor.hpp"
 
+///Class to handle processing of position sensitive pmts
 class PspmtProcessor : public EventProcessor {
 public:
-  /** Default Constructor */
-  PspmtProcessor(void);
-  /** Default Destructor */
-  ~PspmtProcessor() {};
-  
-  /** Declare the plots used in the analysis */
-  virtual void DeclarePlots(void);
-  /** Preprocess the VANDLE data
-   * \param [in] event : the event to preprocess
-   * \return true if successful */
-  virtual bool PreProcess(RawEvent &event);
-  /** Process the event for VANDLE stuff
-   * \param [in] event : the event to process
-   * \return Returns true if the processing was successful */
-  virtual bool Process(RawEvent &event);
-  virtual double GetPositionX(double q1,double q2,double q3,double q4);
-  virtual double GetPositionY(double q1,double q2,double q3,double q4);
-  virtual double GetPositionXNew(double q1,double q2,double q3,double q4);
-  virtual double GetPositionYNew(double q1,double q2,double q3,double q4);
-  
-  
+    /** Default Constructor */
+    PspmtProcessor(void);
+    /** Default Destructor */
+    ~PspmtProcessor() {};
+    
+    /** Declare the plots used in the analysis */
+    virtual void DeclarePlots(void);
+    /** Preprocess the VANDLE data
+     * \param [in] event : the event to preprocess
+     * \return true if successful */
+    virtual bool PreProcess(RawEvent &event);
+    /** Process the event for VANDLE stuff
+     * \param [in] event : the event to process
+     * \return Returns true if the processing was successful */
+    virtual bool Process(RawEvent &event);
 private:
-  struct PspmtData {
-    void Clear(void);
-  } data_;
+    ///Structure defining what data we're storing
+    struct PspmtData {
+	///Clears the data from the processor 
+        void Clear(void);
+    } data_; //!< instance of structure to hold the data 
 };
 #endif // __PSPMTPROCESSOR_HPP__
