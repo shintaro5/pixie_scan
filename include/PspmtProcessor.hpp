@@ -1,14 +1,22 @@
 /** \file PspmtProcessor.hpp
  *  \brief A processor to handle pixelated PMTs
  *  \author Shintaro Go
- *  \date November 16, 2015
+ *  \date August 24, 2016
  */
 
 #ifndef __PSPMTPROCESSOR_HPP__
 #define __PSPMTPROCESSOR_HPP__
+#include "EventProcessor.hpp"
+
+#ifdef useroot
+#include <TFile.h>
+#include <TTree.h>
+#include <TH2D.h>
+#include <TH1D.h>
+#endif
 
 #include "RawEvent.hpp"
-#include "EventProcessor.hpp"
+
 
 ///Class to handle processing of position sensitive pmts
 class PspmtProcessor : public EventProcessor {
@@ -16,7 +24,7 @@ public:
     /** Default Constructor */
     PspmtProcessor(void);
     /** Default Destructor */
-    ~PspmtProcessor() {};
+    ~PspmtProcessor();
     
     /** Declare the plots used in the analysis */
     virtual void DeclarePlots(void);
@@ -29,7 +37,20 @@ public:
      * \return Returns true if the processing was successful */
     virtual bool Process(RawEvent &event);
 private:
-    ///Structure defining what data we're storing
+     /** Obtain the name of the histogram file */
+    void ObtainHisName(void);
+    /** Sets the detectors that are associated with this processor */
+    void SetAssociatedTypes(void);
+  std::string fileName_; //!< String to hold the file name from command line
+
+#ifdef useroot
+  /** Method to setup the ROOT output, tree and histograms */
+  void SetupRootOutput(void);
+  TFile *prootfile_; //! pointer to root file
+  TTree *proottree_; //! pointer to root tree
+#endif
+  
+  ///Structure defining what data we're storing
     struct PspmtData {
 	///Clears the data from the processor 
         void Clear(void);

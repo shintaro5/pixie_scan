@@ -1,24 +1,35 @@
-#include <algorithm>
+/** \file PspmtProcessor.cpp
+ * \brief Class for development of Pspmt
+ *\author S. Go
+ *\date August 24, 2016
+ */
 #include <iostream>
-#include <iomanip>
-#include <limits>
 #include <sstream>
-#include <stdexcept>
-#include <signal.h>
-#include <limits.h>
 
-#include "PspmtProcessor.hpp"
 #include "DammPlotIds.hpp"
-#include "Globals.hpp"
-#include "Messenger.hpp"
+#include "DetectorDriver.hpp"
+#include "GeProcessor.hpp"
+#include "GetArguments.hpp"
+#include "PspmtProcessor.hpp"
 
-using namespace std;
-using namespace dammIds::pspmt;
+#ifdef useroot
+static double x_maxval;
+static double y_maxval;
+
+static double x_qdc;
+static double y_qdc;
+
+static double x_en;
+static double y_en;
+
+static double x_fen;
+static double y_fen;
+#endif
 
 namespace dammIds{
     namespace pspmt{
         
-        // OFFSET = 700//    
+        // OFFSET = 1900//    
         const int D_RAW1=0; //!< Raw 1
         const int D_RAW2=1; //!< raw 2
         const int D_RAW3=2; //!< raw 3
@@ -59,14 +70,11 @@ namespace dammIds{
         const int DD_DOUBLE_TRACE=77; //!< Double traces
         const int DD_SINGLE_TRACE=78; //!< Single traces
     }
-}
+} // namespace dammIds
 
-void PspmtProcessor::PspmtData::Clear(void) {    
-}
+using namespace std;
+using namespace dammIds::pspmt;
 
-PspmtProcessor::PspmtProcessor(void) : EventProcessor(OFFSET, RANGE, "PspmtProcessor") {
-    associatedTypes.insert("pspmt");
-}
 
 void PspmtProcessor::DeclarePlots(void) {
     const int posBins      = 32; 
@@ -125,14 +133,67 @@ void PspmtProcessor::DeclarePlots(void) {
     DeclareHistogram1D(D_TEMP5, energyBins, "Dynode Pgate");
 }
 
+PspmtProcessor::PspmtProcessor(void) : 
+  EventProcessor(OFFSET, RANGE, "PspmtProcessor") {
+  SetAssociatedTypes();
+  ObtainHisName();
+  SetupRootOutput();
+  associatedTypes.insert("pspmt");
+}
+// Destructor to close output files and clean up pointers
+PspmtProcessor::~PspmtProcessor(){
+#ifdef useroot
+  prootfile_->Write();
+  prootfile_->Close();
+  delete(prootfile_);
+#endif
+}
+
+///Associates this Experiment Processor with template and ge detector types
+void PspmtProcessor::SetAssociatedTypes(void) {
+    associatedTypes.insert("pspmt");
+}
+
+#ifdef useroot
+///Sets up ROOT output file, tree, branches, histograms.
+void PspmtProcessor::SetupRootOutput(void) {
+    stringstream rootname;
+    rootname << fileName_ << ".root";
+    prootfile_ = new TFile(rootname.str().c_str(),"RECREATE");
+    proottree_ = new TTree("data","");
+    proottree_->Branch("x_maxval",&x_maxval,"x_maxval/D");
+    proottree_->Branch("y_maxval",&y_maxval,"y_maxval/D");
+    proottree_->Branch("x_qdc", &x_qdc, "x_qdc/D");
+    proottree_->Branch("y_qdc",&y_qdc,"y_qdc/D");
+    proottree_->Branch("x_en", &x_en, "x_en/D");
+    proottree_->Branch("y_en",&y_en,"y_en/D");
+    proottree_->Branch("x_fen", &x_fen, "x_fen/D");
+    proottree_->Branch("y_fen",&y_fen,"y_fen/D");
+}
+#endif
+
+///Obtains the name of the histogram file passed via command line
+void PspmtProcessor::ObtainHisName(void) {
+    char hisFileName[32];
+    GetArgument(1, hisFileName, 32);
+    string temp = hisFileName;
+    fileName_ = temp.substr(0, temp.find_first_of(" "));
+}
 
 bool PspmtProcessor::PreProcess(RawEvent &event){
     if (!EventProcessor::PreProcess(event))
         return false;
     
-    static const vector<ChanEvent*> &pspmtEvents = sumMap["pspmt"]->GetList();
+    //    static const vector<ChanEvent*> &pspmtEvents = sumMap["pspmt"]->GetList();
+    static const vector<ChanEvent*> &pspmtEvents = event.GetSummary("pspmt:pspmt")->GetList();
+
+    //    data_.Clear();
     
-    data_.Clear();
+    if(pspmtEvents.size()>5){
+      cerr << "We had too many pspmt events in the event list," << pspmtEvents.size() << endl;
+      EndProcess();
+      return false;
+    }
     
     double q1=0,q2=0,q3=0,q4=0,qd=0;
     double qdc1=0,qdc2=0,qdc3=0,qdc4=0,qdcd=0;
@@ -169,19 +230,28 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         //double pspmtTime  = chan->GetTime();
         Trace trace       = chan->GetTrace();
         
-        double trace_energy;
+	// From Stan's code, new methods to deduce energies, qdcs...
+	Trace trc  = (*it)->GetTrace();
+	double qdc = trc.GetValue("tqdc");
+	double en  = (*it)->GetEnergy();
+	double max = trc.GetValue("maxval");
+	double fen = trc.GetValue("filterEnergy0");
+	
+	//	cout << "qdc " << qdc << " en " << en << " max " << max << " fen " << fen << endl; 
+	double trace_energy;
         double trace_time;
         double baseline;
-        double qdc;
         //int    num        = trace.GetValue("numPulses");
         
-        if(trace.HasValue("filterEnergy")){
-            traceNum++;   	  
-            trace_time    = trace.GetValue("filterTime");
-            trace_energy  = trace.GetValue("filterEnergy");
-            baseline      = trace.DoBaseline(2,20);
-            qdc             = trace.DoQDC(5,128);
-            
+	if(true){
+	  //        if(trace.HasValue("filterEnergy")){
+	  //cout << "test" << endl;
+	  traceNum++;   	  
+	  trace_time    = trace.GetValue("filterTime");
+	  trace_energy  = trace.GetValue("filterEnergy");
+	  baseline      = trace.DoBaseline(2,20);
+	  //  qdc             = trace.DoQDC(5,128);
+          
             if(ch==0){
                 qdc1 = qdc;
                 tre1 = trace_energy;
@@ -317,4 +387,7 @@ bool PspmtProcessor::Process(RawEvent &event){
 
     EndProcess();
     return(true);
+}
+
+void PspmtProcessor::PspmtData::Clear(void) {    
 }
