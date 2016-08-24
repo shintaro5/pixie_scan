@@ -29,7 +29,7 @@ static double y_fen;
 namespace dammIds{
     namespace pspmt{
         
-        // OFFSET = 1900//    
+        // OFFSET = 700//    
         const int D_RAW1=0; //!< Raw 1
         const int D_RAW2=1; //!< raw 2
         const int D_RAW3=2; //!< raw 3
@@ -241,6 +241,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	double trace_energy;
         double trace_time;
         double baseline;
+	//        double qdc;
         //int    num        = trace.GetValue("numPulses");
         
 	if(true){

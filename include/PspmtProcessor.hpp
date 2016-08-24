@@ -17,7 +17,6 @@
 
 #include "RawEvent.hpp"
 
-
 ///Class to handle processing of position sensitive pmts
 class PspmtProcessor : public EventProcessor {
 public:
@@ -37,6 +36,7 @@ public:
      * \return Returns true if the processing was successful */
     virtual bool Process(RawEvent &event);
 private:
+
      /** Obtain the name of the histogram file */
     void ObtainHisName(void);
     /** Sets the detectors that are associated with this processor */
@@ -50,7 +50,7 @@ private:
   TTree *proottree_; //! pointer to root tree
 #endif
   
-  ///Structure defining what data we're storing
+
     struct PspmtData {
 	///Clears the data from the processor 
         void Clear(void);
