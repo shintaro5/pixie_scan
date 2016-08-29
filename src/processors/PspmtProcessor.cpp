@@ -69,7 +69,7 @@ using namespace dammIds::pspmt;
 void PspmtProcessor::DeclarePlots(void) {
     const int posBins      = 32; 
     const int energyBins   = 8192;
-    const int traceBins    = 128;
+    const int traceBins    = 256;
     const int traceBins2   = 512;
     const int Bins         = 2500;
     
@@ -168,7 +168,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     //    data_.Clear();
     
     if(pspmtEvents.size()>5){
-      cerr << "We had too many pspmt events in the event list," << pspmtEvents.size() << endl;
+      //cerr << "We had too many pspmt events in the event list," << pspmtEvents.size() << endl;
       EndProcess();
       return false;
     }
@@ -187,6 +187,8 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     
     static int traceNum;
     
+ 
+
     for (vector<ChanEvent*>::const_iterator it = pspmtEvents.begin();
          it != pspmtEvents.end(); it++) {
         
@@ -195,7 +197,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         int    ch         = chan->GetChanID().GetLocation();
         double calEnergy  = chan->GetCalEnergy();
         //double pspmtTime  = chan->GetTime();
-        Trace trace       = chan->GetTrace();
+        //Trace trace       = chan->GetTrace();
         
 	Trace trc  = (*it)->GetTrace();
 	double qdc = trc.GetValue("tqdc");
@@ -207,20 +209,21 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         double trace_time;
         double baseline;
 	
-
-	if(ch==0){
+	
+	
+	if(ch==4){
 	  che1= calEnergy;
 	  plot(D_RAW1,che1);
-        }else if(ch==1){
+        }else if(ch==5){
 	  che2= calEnergy;
 	  plot(D_RAW2,che2);
-        }else if(ch==2){
+        }else if(ch==6){
 	  che3= calEnergy;
 	  plot(D_RAW3,che3);
-        }else if(ch==3){
+        }else if(ch==7){
 	  che4= calEnergy;
 	  plot(D_RAW4,che4);
-        }else if(ch==4){
+        }else if(ch==1){
 	  che5= calEnergy;
 	  plot(D_RAW5,che5);
         }
@@ -228,41 +231,39 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 
 	if(true){
 	  traceNum++;   	  
-	  trace_time    = trace.GetValue("filterTime");
-	  trace_energy  = trace.GetValue("filterEnergy");
-	  baseline      = trace.DoBaseline(2,20);
-	  // qdc             = trace.DoQDC(5,128);
-	    
-	
-	
-	   if(ch==0){
+	  trace_time    = trc.GetValue("filterTime");
+	  trace_energy  = trc.GetValue("filterEnergy");
+	  
+	  //	  cout << "channel " << ch << " qdc " << qdc << endl;
+	  
+	   if(ch==4){
 	      qdc1 = qdc;
-	      tre1 = trace_energy;
+	      tre1 = en;
 	      plot(D_ENERGY_TRE1,tre1);
 	      plot(D_QDC1,qdc1);
-            }else if(ch==1){
+            }else if(ch==5){
 	      qdc2 = qdc;
-	      tre2 = trace_energy; 
+	      tre2 = en; 
 	      plot(D_ENERGY_TRE2,tre2);
 	      plot(D_QDC2,qdc2);
-            }else if(ch==2){
+            }else if(ch==6){
 	      qdc3 = qdc;
-	      tre3 = trace_energy; 
+	      tre3 = en; 
 	      plot(D_ENERGY_TRE3,tre3);
 	      plot(D_QDC3,qdc3);
-	    }else if(ch==3){
+	    }else if(ch==7){
 	      qdc4 = qdc;
-	      tre4 = trace_energy; 	  
+	      tre4 = en; 	  
 	      plot(D_ENERGY_TRE4,tre4);
 	      plot(D_QDC4,qdc4);
-	    }else if(ch==4){
+	    }else if(ch==1){
 	      qdc5 = qdc;
-	      tre5 = trace_energy; 
+	      tre5 = en; 
 	      plot(D_ENERGY_TRE5,tre5);
 	      plot(D_QDC5,qdc5);
 	    }
 	   
-	   if(che1>0 && che2>0 && che3>0 && che4>0){
+	   if(che1>50 && che2>50 && che3>50 && che4>50){
 
 	  xche=GetPositionX(che1,che2,che3,che4);
 	  yche=GetPositionY(che1,che2,che3,che4);
@@ -277,8 +278,6 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	  yntre=GetPositionYNew(tre1,tre2,tre3,tre4);
 	  xnqdc=GetPositionXNew(qdc1,qdc2,qdc3,qdc4);
 	  ynqdc=GetPositionYNew(qdc1,qdc2,qdc3,qdc4);
-	  	  
-	  
 	  
 	  
 	  plot(DD_POS_CHE,xche,yche);
@@ -296,8 +295,12 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	}
 
 	
-    } // end of channel event
+	for(vector<int>::iterator ittr = trc.begin();ittr != trc.end();ittr++){
+	  plot(DD_SINGLE_TRACE,ittr-trc.begin(),traceNum,*ittr);
+    }
     
+} // end of channel event
+
     EndProcess();
     return(true);
 }
@@ -362,5 +365,6 @@ double PspmtProcessor::GetPositionYNew(double q1,double q2,double q3,double q4){
   ysum  = q3+q4;
   yposnew  = 512*ydiff/ysum+512;
   
+
   return yposnew;
 }
