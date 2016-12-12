@@ -1,1 +1,85 @@
-config/svp/pspmt.xml
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <Author>
+        <Name>Shintaro Go</Name>
+        <Email>sgo at utk DOT edu</Email>
+        <Date>November 2015</Date>
+    </Author>
+
+    <Description>
+      For JAEA2015 experiment, Pspmt, NaI, MWPC are used.
+    </Description>
+
+    <Global>
+        <Revision version="F"/>
+        <EventWidth unit="s" value="1e-6"/>
+        <EnergyContraction value="4.0"/>
+        <Path>config/</Path>
+        <NumOfTraces value="50"/>
+    </Global>
+
+    <DetectorDriver>
+      <Analyzer name="WaveformAnalyzer"/>
+      <Analyzer name="FittingAnalyzer"/>
+      <Processor name="PspmtProcessor"
+		 />
+      <Processor name="McpProcessor"/>
+      <Processor name="NaIProcessor"/>
+      <Analyzer name="DoubleTraceAnalyzer"
+		gain_match="10"
+		fast_rise="10"
+		fast_gap="10"
+		fast_threshold="80"
+		energy_rise="25"
+		energy_gap="25"
+		slow_rise="20"
+		slow_gap="20"
+		slow_threshold="20"/>
+    </DetectorDriver>
+    <Map verbose_calibration="False" verbose_map="False" verbose_walk="False">
+      <Module number="0">
+        <Channel number="0" type="pspmt" subtype="pspmt">
+        </Channel>
+        <Channel number="1" type="pspmt" subtype="pspmt">
+        </Channel>
+        <Channel number="2" type="pspmt" subtype="pspmt">
+        </Channel>
+        <Channel number="3" type="pspmt" subtype="pspmt">
+        </Channel>  
+	<Channel number="4" type="pspmt" subtype="pspmt">
+        </Channel>  
+        <Channel number="5" type="mcp" subtype="1time">
+        </Channel>
+        <Channel number="6" type="mcp" subtype="1position1">
+        </Channel>
+        <Channel number="7" type="mcp" subtype="1position3">
+        </Channel>
+        <Channel number="8" type="nai" subtype="nai">
+        </Channel>  
+	<Channel number="9" type="nai" subtype="nai">
+        </Channel>  
+	<Channel number="10" type="nai" subtype="nai">
+        </Channel>
+        <Channel number="11" type="nai" subtype="nai">
+        </Channel>
+        <Channel number="12" type="nai" subtype="nai">
+        </Channel>
+        <Channel number="13" type="nai" subtype="nai">
+        </Channel>  
+	<Channel number="14" type="nai" subtype="nai">
+        </Channel>  
+        <Channel number="15" type="nai" subtype="nai">
+        </Channel>
+      </Module>
+      <Module number="1">
+        <Channel number="0" type="ignore" subtype="ignore">
+        </Channel>
+        <Channel number="7" type="mcp" subtype="1position2">
+        </Channel>
+        <Channel number="14" type="logic" subtype="unknown">
+        </Channel>
+      </Module>
+    </Map>
+    <Notebook file="notes.txt" mode="r"/>
+    
+</Configuration>

@@ -38,8 +38,6 @@ public:
 
  virtual double GetPositionX(double q1,double q2,double q3,double q4);
   virtual double GetPositionY(double q1,double q2,double q3,double q4);
-  virtual double GetPositionXNew(double q1,double q2,double q3,double q4);
-  virtual double GetPositionYNew(double q1,double q2,double q3,double q4);
  
 private:
 
