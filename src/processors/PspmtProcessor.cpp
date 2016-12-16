@@ -143,7 +143,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
   if (!EventProcessor::PreProcess(event))
     return false;
   
-  static const vector<ChanEvent*> &pspmtEvents = event.GetSummary("pspmt:pspmt")->GetList();
+  static const vector<ChanEvent*> &pspmtEvents = event.GetSummary("pspmt")->GetList();
   
   if(pspmtEvents.size()>5){
     EndProcess();
@@ -172,6 +172,8 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         //double pspmtTime  = chan->GetTime();
         //Trace trace       = chan->GetTrace();
         
+	//	cout << "subtype " << subtype << endl;
+	
 	Trace trc  = (*it)->GetTrace();
 	double qdc = trc.GetValue("tqdc");
 	double en  = (*it)->GetEnergy();
@@ -181,50 +183,51 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	double trace_energy;
         double trace_time;
         double baseline;
+	string str_ch;
 	
-	if(ch==0){
+	if(subtype=="anode1"){
 	  che1= calEnergy;
 	  plot(D_RAW1,che1);
-	}else if(ch==1){
+	}else if(subtype=="anode2"){
 	  che2= calEnergy;
 	  plot(D_RAW2,che2);
-        }else if(ch==2){
+        }else if(subtype=="anode3"){
 	  che3= calEnergy;
 	  plot(D_RAW3,che3);
-        }else if(ch==3){
+        }else if(subtype=="anode4"){
 	  che4= calEnergy;
 	  plot(D_RAW4,che4);
-        }else if(ch==4){
+        }else if(subtype=="dynode"){
 	  che5= calEnergy;
 	  plot(D_RAW5,che5);
 	}
-     
+	
      	if(true){ 
 	  traceNum++;   	  
 	  trace_time    = trc.GetValue("filterTime");
 	  trace_energy  = trc.GetValue("filterEnergy");
 
-	  if(ch==0){
+	  if(subtype=="anode1"){
 	    qdc1 = qdc;
 	    tre1 = en;
 	    plot(D_ENERGY_TRE1,tre1);
 	    plot(D_QDC1,qdc1);
-	  }else if(ch==1){
+	  }else if(subtype=="anode2"){
 	    qdc2 = qdc;
 	    tre2 = en; 
 	    plot(D_ENERGY_TRE2,tre2);
 	    plot(D_QDC2,qdc2);
-	  }else if(ch==2){
+	  }else if(subtype=="anode3"){
 	    qdc3 = qdc;
 	    tre3 = en; 
 	      plot(D_ENERGY_TRE3,tre3);
 	      plot(D_QDC3,qdc3);
-	  }else if(ch==3){
+	  }else if(subtype=="anode4"){
 	    qdc4 = qdc;
 	    tre4 = en; 	  
 	    plot(D_ENERGY_TRE4,tre4);
 	    plot(D_QDC4,qdc4);
-	  }else if(ch==4){
+	  }else if(subtype=="dynode"){
 	    qdc5 = qdc;
 	    tre5 = en; 
 	    plot(D_ENERGY_TRE5,tre5);
