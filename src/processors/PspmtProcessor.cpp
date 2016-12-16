@@ -172,8 +172,6 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         //double pspmtTime  = chan->GetTime();
         //Trace trace       = chan->GetTrace();
         
-	//	cout << "subtype " << subtype << endl;
-	
 	Trace trc  = (*it)->GetTrace();
 	double qdc = trc.GetValue("tqdc");
 	double en  = (*it)->GetEnergy();
@@ -237,12 +235,12 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	  
 	   if(che1>threshold && che2>threshold && che3>threshold && che4>threshold){
 	     
-	     xche = GetPositionX(che1,che2,che3,che4);
-	     yche = GetPositionY(che1,che2,che3,che4);
-	     xtre = GetPositionX(tre1,tre2,tre3,tre4);
-	     ytre = GetPositionY(tre1,tre2,tre3,tre4);
-	     xqdc = GetPositionX(qdc1,qdc2,qdc3,qdc4);
-	     yqdc = GetPositionY(qdc1,qdc2,qdc3,qdc4);
+	     xche = GetPosition(che1,che2);
+	     yche = GetPosition(che3,che4);
+	     xtre = GetPosition(tre1,tre2);
+	     ytre = GetPosition(tre3,tre4);
+	     xqdc = GetPosition(qdc1,qdc2);
+	     yqdc = GetPosition(qdc3,qdc4);
 	     
 	     plot(DD_POS_CHE,xche,yche);
 	     plot(DD_POS_TRE,xtre,ytre);
@@ -269,7 +267,7 @@ bool PspmtProcessor::Process(RawEvent &event){
 
 void PspmtProcessor::PspmtData::Clear(void) {    
 }
-double PspmtProcessor::GetPositionX(double q1,double q2,double q3,double q4){
+double PspmtProcessor::GetPosition(double q1,double q2){
   
   double xdiff=0,xsum=0,xpos=0;
   
@@ -278,15 +276,4 @@ double PspmtProcessor::GetPositionX(double q1,double q2,double q3,double q4){
   xpos  = 512*xdiff/xsum+512;
   
   return xpos;
-}
-
-double PspmtProcessor::GetPositionY(double q1,double q2,double q3,double q4){
-  
-  double ydiff=0,ysum=0,ypos=0;
-  ydiff = q3-q4;
-  ysum  = q3+q4;
-  ypos  = 512*ydiff/ysum+512;
-  
- 
-  return ypos;
 }
