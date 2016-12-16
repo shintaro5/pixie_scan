@@ -277,3 +277,37 @@ double PspmtProcessor::GetPosition(double q1,double q2){
   
   return xpos;
 }
+double PspmtProcessor::GetPositionXOldboard(double q1,double q2,double q3,double q4){
+  
+  double qright,qleft,qsum;
+  qright = q4+q1;
+  qleft  = q2+q3;
+  qsum   = q1+q2+q3+q4;
+  
+  double xright,xleft,xpos;
+  
+  xright = (qright/qsum)*512+100;
+  xleft  = (qleft/qsum)*512+100;
+  
+  // adopted xright as xposition. xleft is also redundant for position X 
+  xpos=xright;
+  // xpos=xleft;
+  return xpos;
+}
+double PspmtProcessor::GetPositionYOldboard(double q1,double q2,double q3,double q4){
+   
+   double qtop,qbottom,qsum;
+   qtop     = q1+q2;
+   qbottom  = q3+q4;
+   qsum     = q1+q2+q3+q4;
+   
+   double ytop,ybottom,ypos;
+   
+   ytop = (qtop/qsum)*512+100;
+   ybottom  = (qbottom/qsum)*512+100;
+   
+   // adopted ytop as yposition. ybottom is also redundant for yposition 
+   ypos=ytop;
+   // ypos=ybottom;
+   return ypos;
+ }
