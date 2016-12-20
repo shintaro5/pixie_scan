@@ -37,8 +37,12 @@ public:
     virtual bool Process(RawEvent &event);
   
   virtual double GetPosition(double q1,double q2);
-  
- 
+  virtual double GetPositionXOldboard(double q1,double q2,double q3,double q4);
+  virtual double GetPositionYOldboard(double q1,double q2,double q3,double q4);
+  virtual int GetCalibPositionX(double xraw);
+  virtual int GetCalibPositionY(double yraw);
+  virtual int GetID(int xcal,int ycal);
+  virtual double GetCalTimeDiff(double traw_a,double traw_b);
 private:
 
      /** Obtain the name of the histogram file */
