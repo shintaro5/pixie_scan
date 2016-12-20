@@ -59,6 +59,11 @@ namespace dammIds{
       const int DD_ID_CHE=30;
       const int DD_ID_TRE=31;
       const int DD_ID_QDC=32;
+
+      const int DD_ID_TDIFF1=35;
+      const int DD_ID_TDIFF2=36;
+      const int DD_ID_TDIFF3=37;
+      const int DD_ID_TDIFF4=38;
       
       const int DD_SINGLE_TRACE=77;
       
@@ -71,6 +76,7 @@ using namespace dammIds::pspmt;
 void PspmtProcessor::DeclarePlots(void) {
   
   const int mapBins      = 32;
+  const int timeBins     = 256;
   const int traceBins    = 256;
   const int traceBins2   = 512;
   const int posBins      = 1024; 
@@ -106,9 +112,21 @@ void PspmtProcessor::DeclarePlots(void) {
   DeclareHistogram2D(DD_POS_QDC, posBins, posBins, "Pspmt PosRaw by QDC");
   DeclareHistogram2D(DD_POSCAL_QDC, mapBins, mapBins, "Pspmt PosCal by QDC");
   
+  // 1930 ID histograms
   DeclareHistogram2D(DD_ID_CHE, posBins, energyBins, "ID vs CHE");
   DeclareHistogram2D(DD_ID_TRE, posBins, energyBins, "ID vs TRE");
   DeclareHistogram2D(DD_ID_QDC, posBins, energyBins, "ID vs QDC");
+
+  DeclareHistogram2D(DD_ID_TDIFF1, posBins, timeBins, "ID vs TDIFF1-5");
+  DeclareHistogram2D(DD_ID_TDIFF2, posBins, timeBins, "ID vs TDIFF2-5");
+  DeclareHistogram2D(DD_ID_TDIFF3, posBins, timeBins, "ID vs TDIFF3-5");
+  DeclareHistogram2D(DD_ID_TDIFF4, posBins, timeBins, "ID vs TDIFF4-5");
+  
+
+
+  
+  
+  
 
   // Trace
   DeclareHistogram2D(DD_SINGLE_TRACE, traceBins, traceBins2,"Single trace");
@@ -191,6 +209,9 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
     double xtre_cal=0,ytre_cal=0;
     double xqdc_cal=0,yqdc_cal=0;
     
+    double traw1=0,traw2=0,traw3=0,traw4=0,traw5=0;
+    double tdif1_d=0,tdif2_d=0,tdif3_d=0,tdif4_d=0;
+    
     int id=0; // segment id from calbrated positions
     
     static int traceNum;
@@ -204,7 +225,8 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
         double calEnergy  = chan->GetCalEnergy();
         double pspmtTime  = chan->GetTime();
 	//Trace trace       = chan->GetTrace();
-        
+	
+	
 	Trace trc  = (*it)->GetTrace();
 	double qdc = trc.GetValue("tqdc");
 	double en  = (*it)->GetEnergy();
@@ -219,19 +241,24 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 
 	
 	if(subtype=="anode1"){
-	  che1= calEnergy;
+	  che1  = calEnergy;
+	  traw1 = pspmtTime; 
 	  plot(D_RAW1,che1);
 	}else if(subtype=="anode2"){
 	  che2= calEnergy;
+	  traw2 = pspmtTime; 
 	  plot(D_RAW2,che2);
         }else if(subtype=="anode3"){
 	  che3= calEnergy;
+	  traw3 = pspmtTime; 
 	  plot(D_RAW3,che3);
         }else if(subtype=="anode4"){
 	  che4= calEnergy;
+	  traw4 = pspmtTime; 
 	  plot(D_RAW4,che4);
         }else if(subtype=="dynode"){
 	  che5= calEnergy;
+	  traw5 = pspmtTime; 
 	  plot(D_RAW5,che5);
 	}
 	
@@ -262,7 +289,7 @@ bool PspmtProcessor::PreProcess(RawEvent &event){
 	    plot(D_ENERGY_TRE4,tre4);
 	    plot(D_QDC4,qdc4);
 	  }else if(subtype=="dynode"){
-xc 	    qdc5 = qdc;
+ 	    qdc5 = qdc;
 	    tre5 = en; 
 	    plot(D_ENERGY_TRE5,tre5);
 	    plot(D_QDC5,qdc5);
@@ -298,6 +325,11 @@ xc 	    qdc5 = qdc;
 	     
 	     id = GetID(xqdc_cal,yqdc_cal);
 	     
+	     tdif1_d = GetCalTimeDiff(traw1,traw5);
+	     tdif2_d = GetCalTimeDiff(traw2,traw5);
+	     tdif3_d = GetCalTimeDiff(traw3,traw5);
+	     tdif4_d = GetCalTimeDiff(traw4,traw5);
+	     
 	     plot(DD_POS_CHE,xche,yche);
 	     plot(DD_POS_TRE,xtre,ytre);
 	     plot(DD_POS_QDC,xqdc,yqdc);
@@ -309,7 +341,16 @@ xc 	    qdc5 = qdc;
 	     plot(DD_ID_CHE,id,che5);
 	     plot(DD_ID_TRE,id,che5);
 	     plot(DD_ID_QDC,id,che5);
- 
+	     
+	     plot(DD_ID_TDIFF1,id,tdif1_d);
+	     plot(DD_ID_TDIFF2,id,tdif2_d);
+	     plot(DD_ID_TDIFF3,id,tdif3_d);
+	     plot(DD_ID_TDIFF4,id,tdif4_d);
+	     
+	     
+	     
+	     
+	     
 	   }
 	}
 	
@@ -397,4 +438,13 @@ int PspmtProcessor::GetID(int xcal,int ycal){
   int id;
   id= xcal+25*ycal;  // 24 shold be true valiue, but 25 is easy to calculate position from id 
   return id;
+}
+double PspmtProcessor::GetCalTimeDiff(double traw_a,double traw_b){
+  
+  double tdiff=-1000;
+  double toffset =100; // offset for plotting 
+  double calib=4;
+  tdiff=calib*(traw_a-traw_b)+toffset;
+  
+  return tdiff;
 }
